@@ -1,6 +1,9 @@
-﻿namespace FestivalVolunteer.Server.Models
+﻿using FestivalVolunteer.Shared.Models;
+
+namespace FestivalVolunteer.Server.Models
 {
-    public class ShiftRepository
+    internal class ShiftRepository : IShiftRepository
     {
+        DBContext dbShift = new DBContext();
     }
 }
