@@ -3,11 +3,10 @@
 namespace FestivalVolunteer.Server.Models
 {
     public interface IUserRepository
-    {
-       
-        Shift GetUser(int id);
+    { 
+        Shift GetUser(int userid);
         void PostUser(User user);
-        void DeleteUser(int id);
+        void DeleteUser(int userid);
         void PutUser(User user);
     }
 }

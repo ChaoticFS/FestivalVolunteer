@@ -9,6 +9,5 @@ namespace FestivalVolunteer.Server.Models
         void PostTeam(Team team);
         void DeleteTeam(int teamid);
         void PutTeam(Team team);
-
     }
 }
