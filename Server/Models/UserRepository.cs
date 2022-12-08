@@ -1,6 +1,7 @@
 ﻿namespace FestivalVolunteer.Server.Models
 {
-    public class UserRepository
+    public class UserRepository : IUserRepository
     {
+        
     }
 }
