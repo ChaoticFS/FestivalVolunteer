@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.3.32811.315
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FestivalVolunteer.Server", "Server\FestivalVolunteer.Server.csproj", "{2D32E145-B465-43DA-B442-ECBA62EBED23}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FestivalVolunteer.Server", "Server\FestivalVolunteer.Server.csproj", "{2D32E145-B465-43DA-B442-ECBA62EBED23}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FestivalVolunteer.Client", "Client\FestivalVolunteer.Client.csproj", "{C6B8BDFE-FEE2-4A45-B4ED-AA340030258C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FestivalVolunteer.Client", "Client\FestivalVolunteer.Client.csproj", "{C6B8BDFE-FEE2-4A45-B4ED-AA340030258C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FestivalVolunteer.Shared", "Shared\FestivalVolunteer.Shared.csproj", "{F9083DC1-D647-4C46-8225-42A4923B7A4D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FestivalVolunteer.Shared", "Shared\FestivalVolunteer.Shared.csproj", "{F9083DC1-D647-4C46-8225-42A4923B7A4D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
