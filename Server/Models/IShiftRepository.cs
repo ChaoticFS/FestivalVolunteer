@@ -5,9 +5,9 @@ namespace FestivalVolunteer.Server.Models
     public interface IShiftRepository
     {
         List<Shift> GetFilteredShifts();
-        Shift GetShift(string id);
+        Shift GetShift(int id);
         void PostShift(Shift shift);
-        void DeleteShift(string id);
+        void DeleteShift(int id);
         void PutShift(Shift shift);
     }
 }
