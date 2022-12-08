@@ -4,7 +4,7 @@ namespace FestivalVolunteer.Server.Models
 {
     public class TeamRepository : ITeamRepository
     {
-        public List<User> GetTeamMembers()
+        public List<User> GetTeamMembers(int teamid)
         {
             throw new NotImplementedException();
         }

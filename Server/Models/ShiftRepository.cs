@@ -6,7 +6,7 @@ namespace FestivalVolunteer.Server.Models
     {
         DBContext dbShift = new DBContext();
 
-        public List<Shift> GetFilteredShifts()
+        public List<Shift> GetFilteredShifts(Filter filter)
         {
             throw new NotImplementedException();
         }

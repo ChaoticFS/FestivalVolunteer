@@ -1,4 +1,5 @@
 ﻿using FestivalVolunteer.Server.Models;
+using FestivalVolunteer.Shared.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FestivalVolunteer.Server.Controllers
@@ -15,6 +16,36 @@ namespace FestivalVolunteer.Server.Controllers
                 Repository = shiftRepository;
                 Console.WriteLine("Repository initialized");
             }
+        }
+
+        [HttpGet("filter")]
+        public List<Shift> GetFilteredShifts(Filter filter)
+        {
+            return Repository.GetFilteredShifts(filter);
+        }
+
+        [HttpGet]
+        public Shift GetShift(int shiftid)
+        {
+            return Repository.GetShift(shiftid);
+        }
+
+        [HttpPost]
+        public void PostShift(Shift shift)
+        {
+            Repository.PostShift(shift);
+        }
+
+        [HttpPut]
+        public void PutShift(Shift shift)
+        {
+            Repository.PutShift(shift);
+        }
+
+        [HttpDelete]
+        public void DeleteShift(int shiftid)
+        {
+            Repository.DeleteShift(shiftid);
         }
     }
 }

@@ -4,9 +4,9 @@ namespace FestivalVolunteer.Server.Models
 {
     public interface IUserRepository
     { 
-        Shift GetUser(int userid);
+        User GetUser(int userid);
         void PostUser(User user);
-        void DeleteUser(int userid);
         void PutUser(User user);
+        void DeleteUser(int userid);
     }
 }

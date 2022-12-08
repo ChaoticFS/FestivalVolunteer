@@ -4,7 +4,7 @@ namespace FestivalVolunteer.Server.Models
 {
     public class UserRepository : IUserRepository
     {
-        public Shift GetUser(int userid)
+        public User GetUser(int userid)
         {
             throw new NotImplementedException();
         }
@@ -12,11 +12,11 @@ namespace FestivalVolunteer.Server.Models
         {
             throw new NotImplementedException();
         }
-        public void DeleteUser(int userid)
+        public void PutUser(User user)
         {
             throw new NotImplementedException();
         }
-        public void PutUser(User user)
+        public void DeleteUser(int userid)
         {
             throw new NotImplementedException();
         }
