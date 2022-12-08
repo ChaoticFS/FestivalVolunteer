@@ -10,7 +10,7 @@ namespace FestivalVolunteer.Server.Models
         {
             throw new NotImplementedException();
         }
-        public Shift GetShift(int id)
+        public Shift GetShift(int shiftid)
         {
             throw new NotImplementedException();
         }
@@ -18,7 +18,7 @@ namespace FestivalVolunteer.Server.Models
         {
             throw new NotImplementedException();
         }
-        public void DeleteShift(int id)
+        public void DeleteShift(int shiftid)
         {
             throw new NotImplementedException();
         }
