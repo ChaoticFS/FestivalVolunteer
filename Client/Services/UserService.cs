@@ -1,4 +1,5 @@
 ﻿using FestivalVolunteer.Shared.Models;
+using System.Net.Http.Json;
 
 namespace FestivalVolunteer.Client.Services
 {
@@ -13,19 +14,23 @@ namespace FestivalVolunteer.Client.Services
 
         public Task<User> GetUser(int userid)
         {
-            throw new NotImplementedException();
+            var result = httpClient.GetFromJsonAsync<User>($"api/user?userid={userid}");
+            return result;
         }
         public Task PostUser(User user)
         {
-            throw new NotImplementedException();
+            httpClient.PostAsJsonAsync<User>("api/user", user);
+            return Task.CompletedTask;
         }
         public Task PutUser(User user)
         {
-            throw new NotImplementedException();
+            httpClient.PutAsJsonAsync<User>("api/user", user);
+            return Task.CompletedTask;
         }
         public Task DeleteUser(int userid)
         {
-            throw new NotImplementedException();
+            httpClient.DeleteAsync($"api/user?userid={userid}");
+            return Task.CompletedTask;
         }
     }
 }

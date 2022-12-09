@@ -1,4 +1,5 @@
 ﻿using FestivalVolunteer.Shared.Models;
+using System.Net.Http.Json;
 
 namespace FestivalVolunteer.Client.Services
 {
@@ -12,23 +13,28 @@ namespace FestivalVolunteer.Client.Services
         }
         public Task<User[]> GetTeamMembers(int teamid)
         {
-            throw new NotImplementedException();
+            var result = httpClient.GetFromJsonAsync<User[]>($"api/team/members?teamid={teamid}");
+            return result;
         }
         public Task<Team> GetTeam(int teamid)
         {
-            throw new NotImplementedException();
+            var result = httpClient.GetFromJsonAsync<Team>($"api/team?teamid={teamid}");
+            return result;
         }
         public Task PostTeam(Team team) 
-        { 
-            throw new NotImplementedException(); 
+        {
+            httpClient.PostAsJsonAsync<Team>("api/team", team);
+            return Task.CompletedTask;
         }
         public Task DeleteTeam(int teamid)
         {
-            throw new NotImplementedException();
+            httpClient.DeleteAsync($"api/team?teamid={teamid}");
+            return Task.CompletedTask;
         }
         public Task PutTeam(Team team)
         {
-            throw new NotImplementedException();
+            httpClient.PutAsJsonAsync<Team>("api/team", team);
+            return Task.CompletedTask;
         }
     }
 }

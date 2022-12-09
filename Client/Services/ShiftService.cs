@@ -22,19 +22,23 @@ namespace FestivalVolunteer.Client.Services
 
         public Task<Shift> GetShift(int shiftid)
         {
-            throw new NotImplementedException();
+            var result = httpClient.GetFromJsonAsync<Shift>($"api/shift?shiftid={shiftid}");
+            return result;
         }
         public Task PostShift(Shift shift)
         {
-            throw new NotImplementedException();
+            httpClient.PostAsJsonAsync<Shift>("api/shift", shift);
+            return Task.CompletedTask;
         }
         public Task DeleteShift(int shiftid)
         {
-            throw new NotImplementedException();
+            httpClient.DeleteAsync($"api/shift?shiftid={shiftid}");
+            return Task.CompletedTask;
         }
         public Task PutShift(Shift shift)
         {
-            throw new NotImplementedException();
+            httpClient.PutAsJsonAsync<Shift>("api/shift", shift);
+            return Task.CompletedTask;
         }
     }
 }
