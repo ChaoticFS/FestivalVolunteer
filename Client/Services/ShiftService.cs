@@ -1,5 +1,6 @@
 ﻿using FestivalVolunteer.Shared.Models;
 using System.Net.Http.Json;
+using System.Text.Json;
 
 namespace FestivalVolunteer.Client.Services
 {
@@ -14,8 +15,8 @@ namespace FestivalVolunteer.Client.Services
 
         public Task<Shift[]?> GetFilteredShifts(Filter filter)
         {
-            string passfilterparameter = "hvordan i alverden";
-            var result = httpClient.GetFromJsonAsync<Shift[]>("api/shift/filter");
+            string parameters = JsonSerializer.Serialize(filter);
+            var result = httpClient.GetFromJsonAsync<Shift[]>($"api/shift/filter?parameters={parameters}");
             return result;
         }
 

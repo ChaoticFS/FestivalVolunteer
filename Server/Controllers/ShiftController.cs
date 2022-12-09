@@ -1,6 +1,8 @@
 ﻿using FestivalVolunteer.Server.Models;
 using FestivalVolunteer.Shared.Models;
 using Microsoft.AspNetCore.Mvc;
+using System.Runtime.InteropServices;
+using System.Text.Json;
 
 namespace FestivalVolunteer.Server.Controllers
 {
@@ -19,8 +21,10 @@ namespace FestivalVolunteer.Server.Controllers
         }
 
         [HttpGet("filter")]
-        public List<Shift> GetFilteredShifts(Filter filter)
+        public List<Shift>? GetFilteredShifts(string parameters)
         {
+            Filter? filter = JsonSerializer.Deserialize<Filter>(parameters);
+            Console.WriteLine(filter);
             return Repository.GetFilteredShifts(filter);
         }
 
