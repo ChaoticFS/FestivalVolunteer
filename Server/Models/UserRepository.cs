@@ -23,7 +23,8 @@ namespace FestivalVolunteer.Server.Models
         }
         public void PostUser(User user)
         {
-            throw new NotImplementedException();
+            var sql = $"INSERT INTO users(role_id, team_id, name)" +
+                      $"VALUES ";
         }
         public void PutUser(User user)
         {

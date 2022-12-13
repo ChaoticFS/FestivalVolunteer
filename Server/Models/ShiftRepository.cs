@@ -18,11 +18,10 @@ namespace FestivalVolunteer.Server.Models
             throw new NotImplementedException();
         }
 
-        public IEnumerable<Shift> GetAllShifts(int teamid)
+        public IEnumerable<Shift> GetAllShifts()
         {
             var sql = $"SELECT * " +
-                      $"FROM shift" +
-                      $"WHERE team_id = @teamid";
+                      $"FROM shift";
 
             return db.conn.Query<Shift>(sql);
         }

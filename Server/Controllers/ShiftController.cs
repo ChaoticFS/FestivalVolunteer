@@ -30,9 +30,9 @@ namespace FestivalVolunteer.Server.Controllers
         }
 
         [HttpGet("all")]
-        public IEnumerable<Shift>? GetAllShifts(int teamid)
+        public IEnumerable<Shift>? GetAllShifts()
         {
-            return Repository.GetAllShifts(teamid);
+            return Repository.GetAllShifts();
         }
 
         [HttpGet]
