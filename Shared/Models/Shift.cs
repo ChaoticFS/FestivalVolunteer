@@ -8,7 +8,7 @@ namespace FestivalVolunteer.Shared.Models
 {
     public class Shift
     {
-        public int ShiftId { get; set; }
+        public int? ShiftId { get; set; }
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
         public string Name { get; set; }

@@ -4,6 +4,14 @@ namespace FestivalVolunteer.Server.Models
 {
     public class UserRepository : IUserRepository
     {
+        DBContext db;
+
+        public UserRepository()
+        {
+            this.db = new DBContext();
+            Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
+        }
+
         public User GetUser(int userid)
         {
             throw new NotImplementedException();

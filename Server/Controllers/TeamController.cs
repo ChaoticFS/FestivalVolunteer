@@ -19,7 +19,7 @@ namespace FestivalVolunteer.Server.Controllers
         }
 
         [HttpGet("members")]
-        public List<User> GetTeamMembers(int teamid)
+        public IEnumerable<User> GetTeamMembers(int teamid)
         {
             return Repository.GetTeamMembers(teamid);
         }

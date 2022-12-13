@@ -21,7 +21,7 @@ namespace FestivalVolunteer.Server.Controllers
         }
 
         [HttpGet("filter")]
-        public List<Shift>? GetFilteredShifts(string parameters)
+        public IEnumerable<Shift>? GetFilteredShifts(string parameters)
         {
             Filter? filter = JsonSerializer.Deserialize<Filter>(parameters);
             Console.WriteLine(filter);

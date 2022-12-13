@@ -8,7 +8,7 @@ namespace FestivalVolunteer.Shared.Models
 {
     public class Team
     {
-        public int TeamId { get; set; }
+        public int? TeamId { get; set; }
         public string Name { get; set; }
     }
 }

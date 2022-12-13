@@ -4,7 +4,7 @@ namespace FestivalVolunteer.Server.Models
 {
     public interface ITeamRepository
     {
-        List<User> GetTeamMembers(int teamid);
+        IEnumerable<User> GetTeamMembers(int teamid);
         Team GetTeam(int teamid);
         void PostTeam(Team team);
         void DeleteTeam(int teamid);
