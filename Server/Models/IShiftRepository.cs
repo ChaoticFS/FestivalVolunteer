@@ -5,6 +5,7 @@ namespace FestivalVolunteer.Server.Models
     public interface IShiftRepository
     {
         IEnumerable<Shift> GetFilteredShifts(Filter filter);
+        IEnumerable<Shift> GetAllShifts(int teamid);
         Shift GetShift(int shiftid);
         void PostShift(Shift shift);
         void DeleteShift(int shiftid);

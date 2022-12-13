@@ -20,6 +20,11 @@ namespace FestivalVolunteer.Client.Services
             return result;
         }
 
+        public Task<Shift> GetAllShifts(int teamid)
+        {
+            var result = httpClient.GetFromJsonAsync<Shift[]>($"api/shift/all?teamid={teamid}");
+        }
+
         public Task<Shift> GetShift(int shiftid)
         {
             var result = httpClient.GetFromJsonAsync<Shift>($"api/shift?shiftid={shiftid}");

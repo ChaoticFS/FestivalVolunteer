@@ -17,11 +17,21 @@ namespace FestivalVolunteer.Server.Models
         {
             throw new NotImplementedException();
         }
+
+        public IEnumerable<Shift> GetAllShifts(int teamid)
+        {
+            var sql = $"SELECT * " +
+                      $"FROM shift" +
+                      $"WHERE team_id = @teamid";
+
+            return db.conn.Query<Shift>(sql);
+        }
+
         public Shift GetShift(int shiftid)
         {
-            var sql = $"SELECT shift_id, start_time, end_time, name, area, volunteers_needed, priority, locked " +
-                        $"FROM shift " +
-                        $"WHERE shift_id={shiftid}";
+            var sql = $"SELECT * " +
+                      $"FROM shift " +
+                      $"WHERE shift_id={shiftid}";
 
             return db.conn.Query<Shift>(sql).First();
         }

@@ -1,4 +1,5 @@
-﻿using FestivalVolunteer.Shared.Models;
+﻿using Dapper;
+using FestivalVolunteer.Shared.Models;
 
 namespace FestivalVolunteer.Server.Models
 {
@@ -14,7 +15,11 @@ namespace FestivalVolunteer.Server.Models
 
         public User GetUser(int userid)
         {
-            throw new NotImplementedException();
+            var sql = $"SELECT * " +
+                      $"FROM users " +
+                      $"WHERE user_id={userid}";
+
+            return db.conn.Query<User>(sql).First();
         }
         public void PostUser(User user)
         {

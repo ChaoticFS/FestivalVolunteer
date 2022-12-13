@@ -15,7 +15,7 @@ namespace FestivalVolunteer.Server.Models
 
         public IEnumerable<User> GetTeamMembers(int teamid)
         {
-            var sql = $"SELECT user_id, role_id, team_id, name, birthday, email, experience, is_active, group_id" +
+            var sql = $"SELECT * " +
                       $"FROM users" +
                       $"WHERE team_id = @teamid";
 

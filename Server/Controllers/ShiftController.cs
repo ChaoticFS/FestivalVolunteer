@@ -1,4 +1,5 @@
-﻿using FestivalVolunteer.Server.Models;
+﻿using FestivalVolunteer.Client;
+using FestivalVolunteer.Server.Models;
 using FestivalVolunteer.Shared.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Runtime.InteropServices;
@@ -26,6 +27,12 @@ namespace FestivalVolunteer.Server.Controllers
             Filter? filter = JsonSerializer.Deserialize<Filter>(parameters);
             Console.WriteLine(filter);
             return Repository.GetFilteredShifts(filter);
+        }
+
+        [HttpGet("all")]
+        public IEnumerable<Shift>? GetAllShifts(int teamid)
+        {
+            return Repository.GetAllShifts(teamid);
         }
 
         [HttpGet]
