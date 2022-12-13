@@ -19,6 +19,7 @@ namespace FestivalVolunteer.Client.Services
         }
         public Task PostUser(User user)
         {
+            Console.WriteLine("Post user called");
             httpClient.PostAsJsonAsync<User>("api/user", user);
             return Task.CompletedTask;
         }

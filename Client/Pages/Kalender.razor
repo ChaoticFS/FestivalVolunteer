@@ -1,4 +1,6 @@
-﻿@page "/kalender"
+﻿@using FestivalVolunteer.Shared.Models;
+
+@page "/kalender"
 
 <style>
     body {
@@ -22,3 +24,31 @@
     <tbody>
     </tbody>
 </table>
+
+<!-- @objekt.data er syntaxen f.eks. @shift.data -->
+
+@code{
+    public User user = new User();
+    public Shift shift = new Shift();
+
+    protected async void OnInitializedAsync()
+    {
+        user.RoleId = 0;
+        user.TeamId = 0;
+        user.Name = "Tobias";
+        DateTime birthday = DateTime.Now.Date;
+        user.Birthday = birthday;
+        user.Email = "johntest@gmail.com";
+        user.Experience = "yes";
+        user.IsActive = true;
+
+        shift.ShiftId = 1;
+        shift.StartTime = DateTime.Now;
+        shift.EndTime = DateTime.Now;
+        shift.Name = "Toiletrens";
+        shift.Area = "Rengøring";
+        shift.VolunteersNeeded = 3;
+        shift.Priority = 5;
+        shift.Locked = false;
+    }
+}
