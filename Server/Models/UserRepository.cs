@@ -23,8 +23,11 @@ namespace FestivalVolunteer.Server.Models
         }
         public void PostUser(User user)
         {
-            var sql = $"INSERT INTO users(role_id, team_id, name)" +
-                      $"VALUES ";
+            Console.WriteLine("Post user called");
+            var sql = $"INSERT INTO users(role_id, team_id, name, birthday, email, experience, is_active)" +
+                      $"VALUES (@UserId, @TeamId, @Name, @Birthday, @Email, @Experience, @IsActive)";
+
+            db.conn.Execute(sql);
         }
         public void PutUser(User user)
         {
