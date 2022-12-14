@@ -17,7 +17,7 @@ namespace FestivalVolunteer.Server.Models
         {
             var sql = $"SELECT * " +
                       $"FROM users" +
-                      $"WHERE team_id = @teamid";
+                      $"WHERE team_id = {teamid}";
 
             return db.conn.Query<User>(sql);
         }
@@ -31,8 +31,8 @@ namespace FestivalVolunteer.Server.Models
         }
         public void PostTeam(Team team)
         {
-            var sql = $"INSERT INTO team (name)" +
-                      $"VALUES (@Name)";
+            var sql = $"INSERT INTO team(team_id, name) " +
+                      $"VALUES (DEFAULT, '{team.Name}')";
 
             db.conn.Execute(sql);
         }
@@ -47,8 +47,8 @@ namespace FestivalVolunteer.Server.Models
         {
             var sql = $"UPDATE team" +
                       $"SET " +
-                        $"name = @Name" +
-                      $"WHERE team_id = @TeamId";
+                        $"name = {team.Name}" +
+                      $"WHERE team_id = {team.TeamId}";
 
             db.conn.Execute(sql);
         }

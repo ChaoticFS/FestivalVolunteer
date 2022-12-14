@@ -8,7 +8,7 @@ namespace FestivalVolunteer.Shared.Models
 {
     public class Filter
     {
-        public DateTime? Date { get; set; }
+        public string? Date { get; set; }
         public string? Area { get; set; }
         public int? VolunteersNeeded { get; set; }
         public int? Priority { get; set; }

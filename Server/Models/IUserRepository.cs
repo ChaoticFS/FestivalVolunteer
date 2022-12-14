@@ -6,7 +6,7 @@ namespace FestivalVolunteer.Server.Models
     { 
         User GetUser(int userid);
         void PostUser(User user);
-        void PutUser(User user);
         void DeleteUser(int userid);
+        void PutUser(User user);
     }
 }

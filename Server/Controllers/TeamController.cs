@@ -33,6 +33,7 @@ namespace FestivalVolunteer.Server.Controllers
         [HttpPost]
         public void PostTeam(Team team)
         {
+            Console.WriteLine("Post team called");
             Repository.PostTeam(team);
         }
 

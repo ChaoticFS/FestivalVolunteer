@@ -15,7 +15,67 @@ namespace FestivalVolunteer.Server.Models
 
         public IEnumerable<Shift> GetFilteredShifts(Filter filter)
         {
-            throw new NotImplementedException();
+            var sql = $"SELECT * " +
+                      $"FROM shift " +
+                      $"{ConstructWhereFromFilter(filter)}";
+
+            Console.WriteLine(sql);
+
+            return db.conn.Query<Shift>(sql);
+        }
+
+        public string? ConstructWhereFromFilter(Filter filter)
+        {
+            string whereString = "";
+            List<string> filterList = new List<string>();
+
+            if (filter.Date != null)
+            {
+                filterList.Add($"start_time={filter.Date}");
+            }
+            
+            if (filter.Area != null) 
+            { 
+                filterList.Add($"area='{filter.Area}'"); 
+            }
+
+            if (filter.VolunteersNeeded != null) 
+            { 
+                filterList.Add($"volunteers_needed={filter.VolunteersNeeded}");
+            }
+
+            if (filter.Priority != null) 
+            { 
+                filterList.Add($"priority={filter.Priority}"); 
+            }
+
+            if (filter.Locked != null)  
+            { 
+                filterList.Add($"locked={filter.Locked}"); 
+            }
+
+            //filterList.Add($"team_id={filter.TeamId}");
+
+            //filterList.Add($"user_id={filter.UserId}");
+
+            int count = filterList.Count;
+            if (count > 0)
+            {
+                whereString = "WHERE ";
+
+                foreach (var parameter in filterList)
+                {
+                    whereString += $"{parameter}";
+
+                    count--;
+                    if (count > 0) 
+                    {
+                        whereString += " AND ";
+                    }
+                    
+                }
+            }
+            return whereString;
         }
 
         public IEnumerable<Shift> GetAllShifts()
@@ -36,9 +96,9 @@ namespace FestivalVolunteer.Server.Models
         }
         public void PostShift(Shift shift)
         {
-            var sql = $"INSERT INTO shift (start_time, end_time, name, area, volunteers_needed, priority, locked)" +
-                      $"VALUES (@StartTime, @EndTime, @Name, @Area, @VolunteersNeeded, @Priority, @Locked)";
-
+            var sql = $"INSERT INTO shift(start_time, end_time, name, area, volunteers_needed, priority, locked) " +
+                      $"VALUES (TIMESTAMP '{shift.StartTime.ToString("yyyy-MM-dd HH:mm:ss")}', TIMESTAMP '{shift.EndTime.ToString("yyyy-MM-dd HH:mm:ss")}', '{shift.Name}', '{shift.Area}', {shift.VolunteersNeeded}, {shift.Priority}, {shift.Locked})";
+            Console.WriteLine(sql);
             db.conn.Execute(sql);
         }
         public void DeleteShift(int shiftid)
@@ -52,14 +112,14 @@ namespace FestivalVolunteer.Server.Models
         {
             var sql = $"UPDATE shift" +
                       $"SET " +
-                        $"start_time = @StartTime," +
-                        $"end_time = @EndTime" +
-                        $"name = @Name" +
-                        $"area = @Area" +
-                        $"volunteers_needed = @VolunteersNeeded" +
-                        $"priority = @Priority" +
-                        $"locked = @Locked" +
-                      $"WHERE shift_id = @ShiftId";
+                        $"start_time = {shift.StartTime}," +
+                        $"end_time = {shift.EndTime}" +
+                        $"name = {shift.Name}" +
+                        $"area = {shift.Area}" +
+                        $"volunteers_needed = {shift.VolunteersNeeded}" +
+                        $"priority = {shift.Priority}" +
+                        $"locked = {shift.Locked}" +
+                      $"WHERE shift_id = {shift.ShiftId}";
 
             db.conn.Execute(sql);
         }

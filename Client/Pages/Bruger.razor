@@ -2,3 +2,58 @@
 @using FestivalVolunteer.Shared.Models;
 
 @page "/bruger"
+
+@foreach (var exampleshift in shiftList)
+{
+    @exampleshift.StartTime <br /> @exampleshift.Name <br /> @exampleshift.Area <br /> @exampleshift.Priority
+}
+
+@code{
+    [Inject]
+    public ITeamService TeamService { get; set; }
+
+    [Inject]
+    public IShiftService ShiftService { get; set; }
+
+    [Inject]
+    public IUserService UserService { get; set; }
+
+    public Team team = new Team();
+    public Shift shift = new Shift();
+    public User user = new User();
+    public Filter filter = new Filter();
+    public List<Shift> shiftList = new List<Shift>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        user = (await UserService.GetUser(4));
+        /*user.UserId = 4;
+        user.RoleId = 2;
+        user.TeamId = 1;
+        user.Name = "Tobias";
+        DateTime birthday = DateTime.Now.Date;
+        user.Birthday = birthday;
+        user.Email = "johntest@gmail.com";
+        user.Experience = "yes";
+        user.IsActive = true;
+        user.GroupId = null;*/
+
+        shift = (await ShiftService.GetShift(1));
+        /*shift.ShiftId = 1;
+        shift.StartTime = DateTime.Now;
+        shift.EndTime = DateTime.Now;
+        shift.Name = "Toiletrens";
+        shift.Area = "Rengøring";
+        shift.VolunteersNeeded = 3;
+        shift.Priority = 5;
+        shift.Locked = false;*/
+
+        filter.Area = shift.Area;
+        filter.Locked = shift.Locked;
+        filter.Date = $"TIMESTAMP '{shift.StartTime.ToString("yyyy-MM-dd HH:mm:ss")}'";
+        filter.TeamId = user.TeamId.Value;
+        filter.UserId = user.UserId.Value;
+
+        shiftList = (await ShiftService.GetFilteredShifts(filter)).ToList();
+    }
+}

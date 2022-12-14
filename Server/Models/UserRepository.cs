@@ -13,6 +13,18 @@ namespace FestivalVolunteer.Server.Models
             Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
         }
 
+        public string IsNull(int? property)
+        {
+            if (property == null)
+            {
+                return "null";
+            }
+            else
+            {
+                return $"{property}";
+            }
+        }
+
         public User GetUser(int userid)
         {
             var sql = $"SELECT * " +
@@ -21,21 +33,39 @@ namespace FestivalVolunteer.Server.Models
 
             return db.conn.Query<User>(sql).First();
         }
+        
         public void PostUser(User user)
         {
             Console.WriteLine("Post user called");
-            var sql = $"INSERT INTO users(role_id, team_id, name, birthday, email, experience, is_active)" +
-                      $"VALUES (@UserId, @TeamId, @Name, @Birthday, @Email, @Experience, @IsActive)";
+            var sql = $"INSERT INTO users(user_id, role_id, team_id, name, birthday, email, experience, is_active, group_id)" +
+                      $"VALUES (DEFAULT, {user.RoleId}, {IsNull(user.TeamId)}, '{user.Name}', '{user.Birthday.ToString("yyyy-MM-dd")}', '{user.Email}', '{user.Experience}', {user.IsActive}, {IsNull(user.GroupId)})";
+            
+            db.conn.Execute(sql);
+        }
+
+        public void DeleteUser(int userid)
+        {
+            var sql = $"DELETE FROM users" +
+                      $"WHERE user_id={userid}";
 
             db.conn.Execute(sql);
         }
+
         public void PutUser(User user)
         {
-            throw new NotImplementedException();
-        }
-        public void DeleteUser(int userid)
-        {
-            throw new NotImplementedException();
+            var sql = $"UPDATE users " +
+                      $"SET " +
+                        $"role_id = {user.RoleId}, " +
+                        $"team_id = {IsNull(user.TeamId)}, " +
+                        $"name = '{user.Name}', " +
+                        $"birthday = '{user.Birthday.ToString("yyyy-MM-dd")}', " +
+                        $"email = '{user.Email}', " +
+                        $"experience = '{user.Experience}', " +
+                        $"is_active = {user.IsActive}, " +
+                        $"group_id = {IsNull(user.GroupId)} " +
+                      $"WHERE user_id = {user.UserId}";
+            Console.WriteLine(sql);
+            db.conn.Execute(sql);
         }
     }
 }
