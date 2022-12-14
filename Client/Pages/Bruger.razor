@@ -4,12 +4,16 @@
 
 @page "/bruger"
 
-@if (CurrentUser == null)
+<div class="text-center">
+    <h1>Brugerside</h1>
+</div>
+
+@if (CurrentUser == null && LoadedData)
 {
     <button onclick=@RegisterUser>Registrer Bruger</button>
 }
 
-@if (CurrentUser == null)
+@if (CurrentUser == null && LoadedData)
 {
     <button onclick=@Login>Log ind</button>
 }
@@ -177,6 +181,7 @@
     public IUserService UserService { get; set; }
 
     public User? CurrentUser;
+    public bool LoadedData = false;
     public List<Team> teams = new List<Team>();
     public bool RegisterUserActive = false;
     public bool LoginUserActive = false;
@@ -200,6 +205,7 @@
     protected override async Task OnInitializedAsync()
     {
         CurrentUser = await localStore.GetItemAsync<User>("user");
+        LoadedData = true;
 
         teams = (await TeamService.GetAllTeams()).ToList();
 
