@@ -30,12 +30,6 @@ namespace FestivalVolunteer.Server.Controllers
             return Repository.GetFilteredShifts(filter);
         }
 
-        [HttpGet("all")]
-        public IEnumerable<Shift>? GetAllShifts()
-        {
-            return Repository.GetAllShifts();
-        }
-
         [HttpGet]
         public Shift GetShift(int shiftid)
         {
@@ -58,6 +52,18 @@ namespace FestivalVolunteer.Server.Controllers
         public void DeleteShift(int shiftid)
         {
             Repository.DeleteShift(shiftid);
+        }
+
+        [HttpPost("usershift")]
+        public void PostUserToShift(UserShift userShift)
+        {
+            Repository.PostUserToShift(userShift);
+        }
+
+        [HttpDelete("usershift")]
+        public void DeleteUserShift(int userid, int shiftid)
+        {
+            Repository.DeleteUserShift(userid, shiftid);
         }
     }
 }

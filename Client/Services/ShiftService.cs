@@ -20,30 +20,39 @@ namespace FestivalVolunteer.Client.Services
             return result;
         }
 
-        public Task<Shift[]> GetAllShifts()
-        {
-            var result = httpClient.GetFromJsonAsync<Shift[]>($"api/shift/all");
-            return result;
-        }
-
         public Task<Shift> GetShift(int shiftid)
         {
             var result = httpClient.GetFromJsonAsync<Shift>($"api/shift?shiftid={shiftid}");
             return result;
         }
+
         public Task PostShift(Shift shift)
         {
             httpClient.PostAsJsonAsync<Shift>("api/shift", shift);
             return Task.CompletedTask;
         }
+
         public Task DeleteShift(int shiftid)
         {
             httpClient.DeleteAsync($"api/shift?shiftid={shiftid}");
             return Task.CompletedTask;
         }
+
         public Task PutShift(Shift shift)
         {
             httpClient.PutAsJsonAsync<Shift>("api/shift", shift);
+            return Task.CompletedTask;
+        }
+
+        public Task PostUserToShift(UserShift userShift)
+        {
+            httpClient.PostAsJsonAsync<UserShift>("api/shift/usershift", userShift);
+            return Task.CompletedTask;
+        }
+
+        public Task DeleteUserShift(UserShift userShift)
+        {
+            httpClient.DeleteAsync($"api/shift/usershift?userid={userShift.UserId},shiftid={userShift.ShiftId}");
             return Task.CompletedTask;
         }
     }

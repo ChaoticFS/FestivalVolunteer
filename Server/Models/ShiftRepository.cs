@@ -103,23 +103,38 @@ namespace FestivalVolunteer.Server.Models
         }
         public void DeleteShift(int shiftid)
         {
-            var sql = $"DELETE FROM shift" +
+            var sql = $"DELETE FROM shift " +
                       $"WHERE shift_id={shiftid}";
 
             db.conn.Execute(sql);
         }
         public void PutShift(Shift shift)
         {
-            var sql = $"UPDATE shift" +
+            var sql = $"UPDATE shift " +
                       $"SET " +
-                        $"start_time = {shift.StartTime}," +
-                        $"end_time = {shift.EndTime}" +
-                        $"name = {shift.Name}" +
-                        $"area = {shift.Area}" +
-                        $"volunteers_needed = {shift.VolunteersNeeded}" +
-                        $"priority = {shift.Priority}" +
-                        $"locked = {shift.Locked}" +
+                        $"start_time = {shift.StartTime}, " +
+                        $"end_time = {shift.EndTime}, " +
+                        $"name = {shift.Name}, " +
+                        $"area = {shift.Area}, " +
+                        $"volunteers_needed = {shift.VolunteersNeeded}, " +
+                        $"priority = {shift.Priority}, " +
+                        $"locked = {shift.Locked} " +
                       $"WHERE shift_id = {shift.ShiftId}";
+
+            db.conn.Execute(sql);
+        }
+        public void PostUserToShift(UserShift userShift)
+        {
+            var sql = $"INSERT INTO user_shift(user_id, shift_id) " +
+                      $"VALUES ({userShift.UserId}, {userShift.ShiftId})";
+
+            db.conn.Execute(sql);
+        }
+        public void DeleteUserShift(int userid, int shiftid)
+        {
+            var sql = $"DELETE FROM user_shift " +
+                      $"WHERE user_id={userid} " +
+                      $"AND shift_id={shiftid}";
 
             db.conn.Execute(sql);
         }
