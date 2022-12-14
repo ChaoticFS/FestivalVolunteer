@@ -98,7 +98,7 @@ namespace FestivalVolunteer.Server.Models
         {
             var sql = $"INSERT INTO shift(start_time, end_time, name, area, volunteers_needed, priority, locked) " +
                       $"VALUES (TIMESTAMP '{shift.StartTime.ToString("yyyy-MM-dd HH:mm:ss")}', TIMESTAMP '{shift.EndTime.ToString("yyyy-MM-dd HH:mm:ss")}', '{shift.Name}', '{shift.Area}', {shift.VolunteersNeeded}, {shift.Priority}, {shift.Locked})";
-            Console.WriteLine(sql);
+            
             db.conn.Execute(sql);
         }
         public void DeleteShift(int shiftid)

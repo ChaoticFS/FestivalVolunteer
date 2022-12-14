@@ -25,9 +25,10 @@ namespace FestivalVolunteer.Server.Controllers
         }
 
         [HttpPost]
-        public void PostUser(User user)
+        public int PostUser(User user)
         {
-            Repository.PostUser(user);
+            var result = Repository.PostUser(user);
+            return result;
         }
 
         [HttpPut]

@@ -16,11 +16,20 @@ namespace FestivalVolunteer.Server.Models
         public IEnumerable<User> GetTeamMembers(int teamid)
         {
             var sql = $"SELECT * " +
-                      $"FROM users" +
-                      $"WHERE team_id = {teamid}";
+                      $"FROM users " +
+                      $"WHERE team_id={teamid}";
 
             return db.conn.Query<User>(sql);
         }
+
+        public IEnumerable<Team> GetAllTeams()
+        {
+            var sql = "SELECT * " +
+                      "FROM team";
+
+            return db.conn.Query<Team>(sql);
+        }
+
         public Team GetTeam(int teamid)
         {
             var sql = $"SELECT name " +
@@ -38,17 +47,17 @@ namespace FestivalVolunteer.Server.Models
         }
         public void DeleteTeam(int teamid)
         {
-            var sql = $"DELETE FROM team" +
+            var sql = $"DELETE FROM team " +
                       $"WHERE team_id={teamid}";
 
             db.conn.Execute(sql);
         }
         public void PutTeam(Team team)
         {
-            var sql = $"UPDATE team" +
+            var sql = $"UPDATE team " +
                       $"SET " +
-                        $"name = {team.Name}" +
-                      $"WHERE team_id = {team.TeamId}";
+                        $"name={team.Name} " +
+                      $"WHERE team_id={team.TeamId}";
 
             db.conn.Execute(sql);
         }
