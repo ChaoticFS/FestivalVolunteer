@@ -16,6 +16,13 @@ namespace FestivalVolunteer.Client.Services
             var result = httpClient.GetFromJsonAsync<User[]>($"api/team/members?teamid={teamid}");
             return result;
         }
+
+        public Task<Team[]> GetAllTeams()
+        {
+            var result = httpClient.GetFromJsonAsync<Team[]>($"api/team/teams");
+            return result;
+        }
+
         public Task<Team> GetTeam(int teamid)
         {
             var result = httpClient.GetFromJsonAsync<Team>($"api/team?teamid={teamid}");

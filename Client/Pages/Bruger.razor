@@ -1,11 +1,172 @@
 ﻿@using FestivalVolunteer.Client.Services;
 @using FestivalVolunteer.Shared.Models;
+@inject Blazored.LocalStorage.ILocalStorageService localStore;
 
 @page "/bruger"
 
-@foreach (var exampleshift in shiftList)
+@if (CurrentUser == null)
 {
-    @exampleshift.StartTime <br /> @exampleshift.Name <br /> @exampleshift.Area <br /> @exampleshift.Priority
+    <button onclick=@RegisterUser>Registrer Bruger</button>
+}
+
+@if (CurrentUser == null)
+{
+    <button onclick=@Login>Log ind</button>
+}
+
+@if (CurrentUser != null)
+{
+    <button onclick=@Logout>Log ud</button>
+}
+
+@if (CurrentUser != null)
+{
+    <button onclick=@Profile>Profil</button>
+}
+
+@if (RegisterUserActive)
+{
+    <EditForm Model="UserModel"
+        OnValidSubmit="@HandleValidUserRegistry"
+        OnInvalidSubmit="@HandleInvalidUserRegistry">
+        <div class="div-form">
+            <label for="RoleId">Role</label>
+            <select class="form-control" @bind="@UserModel.RoleId">
+                <option />
+                <option value="1"> Frivillig </option>
+                <option value="2"> Koordinator </option>
+                <ValidationMessage For="@(() => UserModel.RoleId)" />
+            </select>
+        </div>
+        <div class="div-form">
+            <label for="TeamId">Team</label>
+            <select class="form-control" @bind="@UserModel.TeamId">
+                <option/>
+                @foreach (var team in teams)
+                {
+                    <option value="@team.TeamId"> @team.Name </option>
+                }
+                <ValidationMessage For="@(() => UserModel.TeamId)" />
+            </select>
+        </div>
+        <div class="div-form">
+            <label for="Name">Navn</label>
+            <InputText id="Name" @bind-Value="UserModel.Name" class="form-control" />
+            <ValidationMessage For="@(() => UserModel.Name)" />
+        </div>
+        <div class="div-form">
+            <label for="Birthday">Fødselsdato</label>
+            <InputDate id="Birthday" @bind-Value="UserModel.Birthday" class="form-control" />
+            <ValidationMessage For="@(() => UserModel.Birthday)" />
+        </div>
+        <div class="div-form">
+            <label for="Email">Emailadresse</label>
+            <InputText id="Email" @bind-Value="UserModel.Email" class="form-control" />
+            <ValidationMessage For="@(() => UserModel.Email)" />
+        </div>
+        <div class="div-form">
+            <label for="Experience">Erfaring</label>
+            <InputText id="Experience" @bind-Value="UserModel.Experience" class="form-control" />
+            <ValidationMessage For="@(() => UserModel.Experience)" />
+        </div>
+        <div class="div-form">
+            <label for="IsActive">Aktiv</label>
+            <InputCheckbox id="IsActive" @bind-Value="UserModel.IsActive" class="form-check" />
+            <ValidationMessage For="@(() => UserModel.IsActive)" />
+        </div>
+        <div class="div-form">
+            <label for="GroupId">Gruppe</label>
+            <select class="form-control" @bind="@UserModel.GroupId">
+                <option/>
+                <option value="1"> Alfatesters </option>
+                <ValidationMessage For="@(() => UserModel.GroupId)" />
+            </select>
+        </div>
+        <div class="div-form">
+            <button type="submit" class="btn btn-primary">Registrer</button>
+        </div>
+    </EditForm>
+ }
+
+ @if (CurrentUser != null)
+{
+    <IdNotification Id=@CurrentUser.UserId.Value />
+}
+
+@if (LoginUserActive)
+{
+    <EditForm Model="UserModel"
+        OnValidSubmit="@HandleValidLogin"
+        OnInvalidSubmit="@HandleInvalidLogin">
+        <div class="div-form">
+            <label for="UserId">Brugerid</label>
+            <InputNumber id="UserId" @bind-Value="UserModel.UserId" class="form-control" />
+            <ValidationMessage For="@(() => UserModel.UserId)" />
+        </div>
+        <div class="div-form">
+            <!--Ikke implementeret, brug id i stedet-->
+            <label for="Password">Password</label>
+            <InputText id="UserPassword" @bind-Value="UserModel.Name" class="form-control" />
+        </div>
+        <div class="div-form">
+            <button type="submit" class="btn btn-primary">Log ind</button>
+        </div>
+    </EditForm>
+}
+
+@if (EditUserActive)
+{
+     <EditForm Model="UserModel"
+        OnValidSubmit="@HandleValidUserEdit"
+        OnInvalidSubmit="@HandleInvalidUserEdit">
+        <div class="div-form">
+            <label for="TeamId">Team</label>
+            <select class="form-control" @bind="@UserModel.TeamId">
+                <option/>
+                @foreach (var team in teams)
+                {
+                    <option value="@team.TeamId"> @team.Name </option>
+                }
+                <ValidationMessage For="@(() => UserModel.TeamId)" />
+            </select>
+        </div>
+        <div class="div-form">
+            <label for="Name">Navn</label>
+            <InputText id="Name" @bind-Value="UserModel.Name" class="form-control" />
+            <ValidationMessage For="@(() => UserModel.Name)" />
+        </div>
+        <div class="div-form">
+            <label for="Birthday">Fødselsdato</label>
+            <InputDate id="Birthday" @bind-Value="UserModel.Birthday" class="form-control" />
+            <ValidationMessage For="@(() => UserModel.Birthday)" />
+        </div>
+        <div class="div-form">
+            <label for="Email">Emailadresse</label>
+            <InputText id="Email" @bind-Value="UserModel.Email" class="form-control" />
+            <ValidationMessage For="@(() => UserModel.Email)" />
+        </div>
+        <div class="div-form">
+            <label for="Experience">Erfaring</label>
+            <InputText id="Experience" @bind-Value="UserModel.Experience" class="form-control" />
+            <ValidationMessage For="@(() => UserModel.Experience)" />
+        </div>
+        <div class="div-form">
+            <label for="IsActive">Aktiv</label>
+            <InputCheckbox id="IsActive" @bind-Value="UserModel.IsActive" class="form-check" />
+            <ValidationMessage For="@(() => UserModel.IsActive)" />
+        </div>
+        <div class="div-form">
+            <label for="GroupId">Gruppe</label>
+            <select class="form-control" @bind="@UserModel.GroupId">
+                <option value="@UserModel.GroupId"> Alfatesters </option>
+                <option value="1"> Alfatesters </option>
+                <ValidationMessage For="@(() => UserModel.GroupId)" />
+            </select>
+        </div>
+        <div class="div-form">
+            <button type="submit" class="btn btn-primary">Rediger</button>
+        </div>
+    </EditForm>
 }
 
 @code{
@@ -13,47 +174,112 @@
     public ITeamService TeamService { get; set; }
 
     [Inject]
-    public IShiftService ShiftService { get; set; }
-
-    [Inject]
     public IUserService UserService { get; set; }
 
-    public Team team = new Team();
-    public Shift shift = new Shift();
-    public User user = new User();
-    public Filter filter = new Filter();
-    public List<Shift> shiftList = new List<Shift>();
+    public User? CurrentUser;
+    public List<Team> teams = new List<Team>();
+    public bool RegisterUserActive = false;
+    public bool LoginUserActive = false;
+    public bool EditUserActive = false;
+    public bool NotifyUser = true;
+
+    public User UserModel = new User();
+    public int Id;
+
+    public async void UpdateLocalStorage(User user)
+    {
+        await localStore.SetItemAsync<User>("user", user);
+    }
+
+    public async void ClearLocalStorage()
+    {
+        await localStore.ClearAsync();
+        CurrentUser = null;
+    }
 
     protected override async Task OnInitializedAsync()
     {
-        user = (await UserService.GetUser(4));
-        /*user.UserId = 4;
-        user.RoleId = 2;
-        user.TeamId = 1;
-        user.Name = "Tobias";
-        DateTime birthday = DateTime.Now.Date;
-        user.Birthday = birthday;
-        user.Email = "johntest@gmail.com";
-        user.Experience = "yes";
-        user.IsActive = true;
-        user.GroupId = null;*/
+        CurrentUser = await localStore.GetItemAsync<User>("user");
 
-        shift = (await ShiftService.GetShift(1));
-        /*shift.ShiftId = 1;
-        shift.StartTime = DateTime.Now;
-        shift.EndTime = DateTime.Now;
-        shift.Name = "Toiletrens";
-        shift.Area = "Rengøring";
-        shift.VolunteersNeeded = 3;
-        shift.Priority = 5;
-        shift.Locked = false;*/
+        teams = (await TeamService.GetAllTeams()).ToList();
 
-        filter.Area = shift.Area;
-        filter.Locked = shift.Locked;
-        filter.Date = $"TIMESTAMP '{shift.StartTime.ToString("yyyy-MM-dd HH:mm:ss")}'";
-        filter.TeamId = user.TeamId.Value;
-        filter.UserId = user.UserId.Value;
+        StateHasChanged();
+    }
 
-        shiftList = (await ShiftService.GetFilteredShifts(filter)).ToList();
+    private void RegisterUser()
+    {
+        UserModel = new User();
+        UserModel.Birthday = DateTime.Now.Date;
+        LoginUserActive = false;
+        EditUserActive = false;
+        RegisterUserActive = !RegisterUserActive;
+        StateHasChanged();
+    }
+
+    private void Login()
+    {
+        UserModel = new User();
+        RegisterUserActive = false;
+        EditUserActive = false;
+        LoginUserActive = !LoginUserActive;
+        StateHasChanged();
+    }
+
+    private void Logout()
+    {
+        CurrentUser = null;
+        ClearLocalStorage();
+        Login();
+    }
+
+    private void Profile()
+    {
+        UserModel = CurrentUser;
+        LoginUserActive = false;
+        RegisterUserActive = false;
+        EditUserActive = !EditUserActive;
+        StateHasChanged();
+    }
+
+    private async void HandleValidUserRegistry()
+    {
+        UserModel.UserId = await UserService.PostUser(UserModel);
+        CurrentUser = await UserService.GetUser(UserModel.UserId.Value);
+        UpdateLocalStorage(CurrentUser);
+        Id = UserModel.UserId.Value;
+        UserModel = new User();
+        Profile();
+        StateHasChanged();
+    }
+
+    private void HandleInvalidUserRegistry()
+    {
+        Console.WriteLine("Invalid user registry");
+    }
+
+    private async void HandleValidLogin()
+    {
+        CurrentUser = await UserService.GetUser(UserModel.UserId.Value);
+        UpdateLocalStorage(CurrentUser);
+        Login();
+        StateHasChanged();
+    }
+
+    private void HandleInvalidLogin()
+    {
+        Console.WriteLine("Invalid login");
+    }
+
+    private async void HandleValidUserEdit()
+    {
+        UserModel.UserId = CurrentUser.UserId;
+        UserModel.RoleId = CurrentUser.RoleId;
+        Console.WriteLine(UserModel.UserId);
+        await UserService.PutUser(UserModel);
+    }
+
+    private void HandleInvalidUserEdit()
+    {
+        Console.WriteLine("Invalid user edit");
     }
 }
