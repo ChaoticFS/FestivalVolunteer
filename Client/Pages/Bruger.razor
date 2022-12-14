@@ -10,22 +10,22 @@
 
 @if (CurrentUser == null && LoadedData)
 {
-    <button onclick=@RegisterUser>Registrer Bruger</button>
+    <button class="button-user" onclick=@RegisterUser>Registrer Bruger</button>
 }
 
 @if (CurrentUser == null && LoadedData)
 {
-    <button onclick=@Login>Log ind</button>
+    <button class="button-user" onclick=@Login>Log ind</button>
 }
 
 @if (CurrentUser != null)
 {
-    <button onclick=@Logout>Log ud</button>
+    <button class="button-user" onclick=@Logout>Log ud</button>
 }
 
 @if (CurrentUser != null)
 {
-    <button onclick=@Profile>Profil</button>
+    <button class="button-user" onclick=@Profile>Profil</button>
 }
 
 @if (RegisterUserActive)
