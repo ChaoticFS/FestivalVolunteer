@@ -23,11 +23,11 @@
     @foreach (var vagt in vagtliste)
     {
     <tr>
-        <td> @vagt.StartTime.ToString("yyyy-MM-dd") </td>
+        <td> @vagt.StartTime.ToString("dd-MM") </td>
         <th> @user.Name </th>
         <th> @vagt.Name </th>
         <th> @vagt.Area </th>
-        <th> @vagt.StartTime.Date @vagt.EndTime.Date</th>
+        <th> @vagt.StartTime.ToString("HH:mm") - @vagt.EndTime.ToString("HH:mm") </th>
     </tr>
     }
 </table>
