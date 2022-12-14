@@ -21,6 +21,7 @@
 .nav-item {
     font-size: 0.9rem;
     padding-bottom: 0.5rem;
+    background-color: white;
 }
 
     .nav-item:first-of-type {
@@ -50,7 +51,11 @@
     color: #1C174D;
 }
 
-.page-icon {
+.page-logo {
+    overflow: auto;
+    position: absolute;
+    bottom: 0;
+    z-index: -1;
 }
 
 
