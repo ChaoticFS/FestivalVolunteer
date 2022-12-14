@@ -1,4 +1,5 @@
 ﻿@using FestivalVolunteer.Shared.Models;
+@using FestivalVolunteer.Client.Services;
 
 @page "/kalender"
 
@@ -11,49 +12,41 @@
     <h1>Kalenderoversigt</h1>
 </div>
 <table class="table">
-    <thead>
-        <tr>
-            <th>Dato</th>
-            <th>Arbejdende</th>
-            <th>Vagt</th>
-            <th>Område</th>
-            <th>Tidspunkt</th>
+    <tr>
+        <th>Dato</th>
+        <th>Arbejdende</th>
+        <th>Vagt</th>
+        <th>Område</th>
+        <th>Tidspunkt</th>
+    </tr>
 
-        </tr>
-    </thead>
-    <tbody>
-    <th> @shift.StartTime.ToString("yyyy-MM-dd") </th>
+    @foreach (var vagt in vagtliste)
+    {
+    <tr>
+        <td> @vagt.StartTime.ToString("dd-MM") </td>
         <th> @user.Name </th>
-        <th> @shift.Name </th>
-        <th> @shift.Area </th>
-    <th> @shift.StartTime.Date @shift.EndTime.Date</th>
-    </tbody>
+        <th> @vagt.Name </th>
+        <th> @vagt.Area </th>
+        <th> @vagt.StartTime.ToString("HH:mm") - @vagt.EndTime.ToString("HH:mm") </th>
+    </tr>
+    }
 </table>
 
-<!-- @objekt.data er syntaxen f.eks. @shift.data -->
-
 @code{
+    [Inject]
+    public IShiftService ShiftService { get; set; }
+
+    [Inject]
+    public IUserService UserService { get; set; }
+
     public User user = new User();
     public Shift shift = new Shift();
+    public List<Shift> vagtliste = new List<Shift>();
 
-    protected async void OnInitializedAsync()
+    protected override async Task OnInitializedAsync()
     {
-        user.RoleId = 0;
-        user.TeamId = 0;
-        user.Name = "Tobias";
-        DateTime birthday = DateTime.Now.Date;
-        user.Birthday = birthday;
-        user.Email = "johntest@gmail.com";
-        user.Experience = "yes";
-        user.IsActive = true;
-
-        shift.ShiftId = 1;
-        shift.StartTime = DateTime.Now;
-        shift.EndTime = DateTime.Now;
-        shift.Name = "Toiletrens";
-        shift.Area = "Rengøring";
-        shift.VolunteersNeeded = 3;
-        shift.Priority = 5;
-        shift.Locked = false;
+        shift = (await ShiftService.GetShift(1));
+        vagtliste.Add(shift);
+        user = (await UserService.GetUser(4));
     }
 }
