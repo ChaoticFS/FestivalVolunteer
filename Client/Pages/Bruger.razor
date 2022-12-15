@@ -80,8 +80,8 @@
         </div>
         <div class="div-form">
             <label for="GroupId">Gruppe</label>
-            <select class="form-control" @bind="@CurrentUser.GroupId">
-                <option value=""></option>
+            <select class="form-control" @bind="@UserModel.GroupId">
+                <option/>
                 <option value="1"> Alfatesters </option>
                 <ValidationMessage For="@(() => UserModel.GroupId)" />
             </select>
@@ -162,7 +162,7 @@
         <div class="div-form">
             <label for="GroupId">Gruppe</label>
             <select class="form-control" @bind="@UserModel.GroupId">
-                <option value="@UserModel.GroupId"> Alfatesters </option>
+                <option value="@CurrentUser.GroupId"> </option>
                 <option value="1"> Alfatesters </option>
                 <ValidationMessage For="@(() => UserModel.GroupId)" />
             </select>
