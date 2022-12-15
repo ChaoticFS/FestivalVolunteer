@@ -1,14 +1,14 @@
-﻿@page "/vagtoversigt"
+﻿@using FestivalVolunteer.Shared.Models;
+@using FestivalVolunteer.Client.Services;
+@inject Blazored.LocalStorage.ILocalStorageService localStore;
 
-<style>
-    body {
-        background-color: rgb(255,255,255);
-    }
-</style>
+@page "/vagtoversigt"
+
+<div class="text-center">
+    <h1>Dine vagter</h1>
+</div>
+
 <table class="table">
-    <div class="text-center">
-        <h1>Dine vagter</h1>
-    </div>
     <thead>
         <tr>
             <th>Dato</th>
@@ -19,5 +19,35 @@
         </tr>
     </thead>
     <tbody>
+        @foreach (var vagt in vagtliste)
+        {
+        <tr>
+            <td> @vagt.StartTime.ToString("dd-MM") </td>
+            <td> @user.Name </td>
+            <td> @vagt.Area </td>
+            <td> @vagt.StartTime.ToString("HH:mm") - @vagt.EndTime.ToString("HH:mm") </td>
+        </tr>
+        }
     </tbody>
 </table>
+
+@code {
+    [Inject]
+    public IShiftService ShiftService { get; set; }
+
+    [Inject]
+    public IUserService UserService { get; set; }
+
+    public User user = new User();
+    public Shift shift = new Shift();
+    public List<Shift> vagtliste = new List<Shift>();
+    public Filter filter = new Filter();
+
+    protected override async Task OnInitializedAsync()
+    {
+        vagtliste = (await ShiftService.GetFilteredShifts(filter)).ToList();
+        user = await localStore.GetItemAsync<User>("user");
+        filter.UserId = user.UserId.Value;
+        filter.TeamId = user.TeamId.Value;
+    }
+}
