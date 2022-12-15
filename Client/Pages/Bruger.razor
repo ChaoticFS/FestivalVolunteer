@@ -209,6 +209,13 @@
 
         teams = (await TeamService.GetAllTeams()).ToList();
 
+        if (CurrentUser == null){
+            RegisterUser();
+        }
+        else{
+            Profile();
+        }
+
         StateHasChanged();
     }
 
