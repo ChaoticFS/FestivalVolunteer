@@ -9,6 +9,7 @@ namespace FestivalVolunteer.Server.Models
         void PostShift(Shift shift);
         void DeleteShift(int shiftid);
         void PutShift(Shift shift);
+        IEnumerable<UserShift> GetUserShift(int userid, int shiftid);
         void PostUserToShift(UserShift userShift);
         void DeleteUserShift(int userid, int shiftid);
     }

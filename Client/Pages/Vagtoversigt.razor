@@ -1,6 +1,6 @@
-﻿@using FestivalVolunteer.Shared.Models;
+﻿@inject Blazored.LocalStorage.ILocalStorageService localStore;
+@using FestivalVolunteer.Shared.Models;
 @using FestivalVolunteer.Client.Services;
-@inject Blazored.LocalStorage.ILocalStorageService localStore;
 
 @page "/vagtoversigt"
 
@@ -15,18 +15,20 @@
             <th>Stilling</th>
             <th>Område</th>
             <th>Tidspunkt</th>
-
         </tr>
     </thead>
     <tbody>
-        @foreach (var vagt in vagtliste)
+        @if (vagtliste.Any<Shift>())
         {
-        <tr>
-            <td> @vagt.StartTime.ToString("dd-MM") </td>
-            <td> @user.Name </td>
-            <td> @vagt.Area </td>
-            <td> @vagt.StartTime.ToString("HH:mm") - @vagt.EndTime.ToString("HH:mm") </td>
-        </tr>
+            @foreach (var vagt in vagtliste)
+            {
+                <tr>
+                    <td> @vagt.StartTime.ToString("dd-MM") </td>
+                    <td> @if (CurrentUser.TeamId != null){@CurrentUser.Name} else{@Default}</td>
+                    <td> @vagt.Area </td>
+                    <td> @vagt.StartTime.ToString("HH:mm") - @vagt.EndTime.ToString("HH:mm") </td>
+                </tr>
+            } 
         }
     </tbody>
 </table>
@@ -38,16 +40,24 @@
     [Inject]
     public IUserService UserService { get; set; }
 
-    public User user = new User();
-    public Shift shift = new Shift();
+    public User CurrentUser;
     public List<Shift> vagtliste = new List<Shift>();
     public Filter filter = new Filter();
+    public string Default = "N/A";
 
     protected override async Task OnInitializedAsync()
     {
+        CurrentUser = await localStore.GetItemAsync<User>("user");
+        if (CurrentUser != null && CurrentUser.TeamId != null)
+        {
+            filter.UserId = CurrentUser.UserId.Value;
+            filter.TeamId = CurrentUser.TeamId.Value;
+            LoadShifts(filter);
+        }
+    }
+
+    public async void LoadShifts(Filter filter)
+    {
         vagtliste = (await ShiftService.GetFilteredShifts(filter)).ToList();
-        user = await localStore.GetItemAsync<User>("user");
-        filter.UserId = user.UserId.Value;
-        filter.TeamId = user.TeamId.Value;
     }
 }

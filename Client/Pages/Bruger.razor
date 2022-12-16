@@ -10,22 +10,22 @@
 
 @if (CurrentUser == null && LoadedData)
 {
-    <button class="button-user" onclick=@RegisterUser>Registrer Bruger</button>
+    <button class="btn btn-primary" style="margin: 5px" onclick=@RegisterUser>Registrer Bruger</button>
 }
 
 @if (CurrentUser == null && LoadedData)
 {
-    <button class="button-user" onclick=@Login>Log ind</button>
+    <button class="btn btn-primary" style="margin: 5px" onclick=@Login>Log ind</button>
 }
 
 @if (CurrentUser != null)
 {
-    <button class="button-user" onclick=@Logout>Log ud</button>
+    <button class="btn btn-primary" style="margin: 5px" onclick=@Logout>Log ud</button>
 }
 
 @if (CurrentUser != null)
 {
-    <button class="button-user" onclick=@Profile>Profil</button>
+    <button class="btn btn-primary" style="margin: 5px" onclick=@Profile>Profil</button>
 }
 
 @if (RegisterUserActive)
@@ -274,7 +274,7 @@
     {
         CurrentUser = await UserService.GetUser(UserModel.UserId.Value);
         UpdateLocalStorage(CurrentUser);
-        Login();
+        Profile();
         StateHasChanged();
     }
 

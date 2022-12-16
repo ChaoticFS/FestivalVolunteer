@@ -44,6 +44,12 @@ namespace FestivalVolunteer.Client.Services
             return Task.CompletedTask;
         }
 
+        public Task<UserShift> GetUserShift(int userid, int shiftid)
+        {
+            var result = httpClient.GetFromJsonAsync<UserShift>($"api/shift/usershift?userid={userid}");
+            return result;
+        }
+
         public Task PostUserToShift(UserShift userShift)
         {
             httpClient.PostAsJsonAsync<UserShift>("api/shift/usershift", userShift);

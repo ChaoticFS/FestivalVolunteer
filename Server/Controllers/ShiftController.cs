@@ -54,6 +54,12 @@ namespace FestivalVolunteer.Server.Controllers
             Repository.DeleteShift(shiftid);
         }
 
+        [HttpGet("usershift")]
+        public IEnumerable<UserShift> GetUserShift(int userid, int shiftid)
+        {
+            return Repository.GetUserShift(userid, shiftid);
+        }
+
         [HttpPost("usershift")]
         public void PostUserToShift(UserShift userShift)
         {

@@ -1,4 +1,5 @@
-﻿@using FestivalVolunteer.Shared.Models;
+﻿@inject Blazored.LocalStorage.ILocalStorageService localStore;
+@using FestivalVolunteer.Shared.Models;
 @using FestivalVolunteer.Client.Services;
 
 @page "/kalender"
@@ -8,23 +9,28 @@
 </div>
 
 <table class="table">
-    <tr>
-        <th>Dato</th>
-        <th>Arbejdende</th>
-        <th>Vagt</th>
-        <th>Område</th>
-        <th>Tidspunkt</th>
-    </tr>
-
-    @foreach (var vagt in vagtliste)
+    <thead>
+        <tr>
+            <th>Dato</th>
+            <th>Arbejdende</th>
+            <th>Vagt</th>
+            <th>Område</th>
+            <th>Tidspunkt</th>
+        </tr>
+    </thead>
+    @if (vagtliste.Any<Shift>())
     {
-    <tr>
-        <td> @vagt.StartTime.ToString("dd-MM") </td>
-        <th> @user.Name </th>
-        <th> @vagt.Name </th>
-        <th> @vagt.Area </th>
-        <th> @vagt.StartTime.ToString("HH:mm") - @vagt.EndTime.ToString("HH:mm") </th>
-    </tr>
+        @foreach (var vagt in vagtliste)
+        {
+            <tr>
+                <td> @vagt.StartTime.ToString("dd-MM") </td>
+                <td> foreach loop med alle på denne vagt her (husk linebreaks) </td>
+                <td> @vagt.Name </td>
+                <td> @vagt.Area </td>
+                <td> @vagt.StartTime.ToString("HH:mm") - @vagt.EndTime.ToString("HH:mm") </td>
+                <td> @if (CurrentUser.RoleId==2){<button class="btn btn-primary" style="margin: 5px" onclick=>Rediger</button>} else if (vagt.Locked==false && GetUserShift(vagt.ShiftId.Value)){<button class="btn btn-primary" style="margin: 5px" onclick=>Tilmeld</button>}</td>
+            </tr>
+        }
     }
 </table>
 
@@ -35,14 +41,39 @@
     [Inject]
     public IUserService UserService { get; set; }
 
-    public User user = new User();
-    public Shift shift = new Shift();
+    public User CurrentUser;
     public List<Shift> vagtliste = new List<Shift>();
+    public Filter filter = new Filter();
+    public Shift ShiftModel = new Shift();
+    public bool editShift
 
     protected override async Task OnInitializedAsync()
     {
-        shift = (await ShiftService.GetShift(1));
-        vagtliste.Add(shift);
-        user = (await UserService.GetUser(4));
+        CurrentUser = await localStore.GetItemAsync<User>("user");
+        if (CurrentUser != null && CurrentUser.TeamId != null)
+        {
+            filter.TeamId = CurrentUser.TeamId.Value;
+            LoadShifts(filter);
+        }
+    }
+
+    public async void LoadShifts(Filter filter)
+    {
+        vagtliste = (await ShiftService.GetFilteredShifts(filter)).ToList();
+    }
+
+    public async void EditShift(Shift shift)
+    {
+        editShift = !editShift;
+        if (editShift)
+        {
+            ShiftModel = shift;
+        }
+    }
+
+    public async Task<bool> GetUserShift(int shiftid)
+    {
+        UserShift? result = await ShiftService.GetUserShift(CurrentUser.UserId.Value, shiftid);
+        return result != null;
     }
 }

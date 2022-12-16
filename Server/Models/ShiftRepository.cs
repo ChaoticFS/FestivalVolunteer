@@ -15,19 +15,50 @@ namespace FestivalVolunteer.Server.Models
 
         public IEnumerable<Shift> GetFilteredShifts(Filter filter)
         {
-            var sql = $"SELECT * " +
-                      $"FROM shift " +
-                      $"{ConstructWhereFromFilter(filter)}";
+            if (filter.UserId != null)
+            {
+                var usersql = $"SELECT * " +
+                              $"FROM shift " +
+                              $"{ConstructWhereFromFilter(filter)}";
 
-            Console.WriteLine(sql);
+                try
+                {
+                    return db.conn.Query<Shift>(usersql);
+                }
+                catch (Exception e) 
+                {
+                    Console.WriteLine($"Exception: {e.Message}, user has no associated shifts");
+                }
+            }
 
-            return db.conn.Query<Shift>(sql);
+            try
+            {
+                var teamsql = $"SELECT * " +
+                              $"FROM shift " +
+                              $"{ConstructWhereFromFilter(filter)}";
+
+                return db.conn.Query<Shift>(teamsql);
+            }
+            catch (Exception e )
+            {
+                Console.WriteLine(e.Message);
+
+                var sql = "SELECT * " +
+                          "FROM shift";
+
+                return db.conn.Query<Shift>(sql);
+            }
         }
 
         public string? ConstructWhereFromFilter(Filter filter)
         {
             string whereString = "";
             List<string> filterList = new List<string>();
+
+            if (filter.UserId != null)
+            {
+                filterList.Add($"user_id={filter.UserId}");
+            }
 
             if (filter.Date != null)
             {
@@ -54,9 +85,7 @@ namespace FestivalVolunteer.Server.Models
                 filterList.Add($"locked={filter.Locked}"); 
             }
 
-            //filterList.Add($"team_id={filter.TeamId}");
-
-            //filterList.Add($"user_id={filter.UserId}");
+            filterList.Add($"team_id={filter.TeamId}");
 
             int count = filterList.Count;
             if (count > 0)
@@ -96,8 +125,8 @@ namespace FestivalVolunteer.Server.Models
         }
         public void PostShift(Shift shift)
         {
-            var sql = $"INSERT INTO shift(start_time, end_time, name, area, volunteers_needed, priority, locked) " +
-                      $"VALUES (TIMESTAMP '{shift.StartTime.ToString("yyyy-MM-dd HH:mm:ss")}', TIMESTAMP '{shift.EndTime.ToString("yyyy-MM-dd HH:mm:ss")}', '{shift.Name}', '{shift.Area}', {shift.VolunteersNeeded}, {shift.Priority}, {shift.Locked})";
+            var sql = $"INSERT INTO shift(start_time, end_time, name, area, volunteers_needed, priority, locked, team_id) " +
+                      $"VALUES (TIMESTAMP '{shift.StartTime.ToString("yyyy-MM-dd HH:mm:ss")}', TIMESTAMP '{shift.EndTime.ToString("yyyy-MM-dd HH:mm:ss")}', '{shift.Name}', '{shift.Area}', {shift.VolunteersNeeded}, {shift.Priority}, {shift.Locked}, {shift.TeamId})";
             
             db.conn.Execute(sql);
         }
@@ -119,10 +148,21 @@ namespace FestivalVolunteer.Server.Models
                         $"volunteers_needed = {shift.VolunteersNeeded}, " +
                         $"priority = {shift.Priority}, " +
                         $"locked = {shift.Locked} " +
+                        $"team_id = {shift.TeamId} " +
                       $"WHERE shift_id = {shift.ShiftId}";
 
             db.conn.Execute(sql);
         }
+        public IEnumerable<UserShift> GetUserShift(int userid, int shiftid)
+        {
+            var sql = $"SELECT * " +
+                      $"FROM user_shift " +
+                      $"WHERE user_id={userid} " +
+                      $"AND shift_id={shiftid}";
+
+            return db.conn.Query<UserShift>(sql);
+        }
+
         public void PostUserToShift(UserShift userShift)
         {
             var sql = $"INSERT INTO user_shift(user_id, shift_id) " +

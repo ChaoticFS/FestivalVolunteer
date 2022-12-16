@@ -65,7 +65,7 @@ namespace FestivalVolunteer.Server.Models
                         $"is_active={user.IsActive}, " +
                         $"group_id={IsNull(user.GroupId)} " +
                       $"WHERE user_id = {user.UserId}";
-            Console.WriteLine(sql);
+
             db.conn.Execute(sql);
         }
     }

@@ -16,5 +16,6 @@ namespace FestivalVolunteer.Shared.Models
         public int VolunteersNeeded { get; set; }
         public int Priority { get; set; }
         public bool Locked { get; set; }
+        public int TeamId { get; set; }
     }
 }
