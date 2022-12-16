@@ -28,7 +28,7 @@
                 <td> @vagt.Name </td>
                 <td> @vagt.Area </td>
                 <td> @vagt.StartTime.ToString("HH:mm") - @vagt.EndTime.ToString("HH:mm") </td>
-                <td> @if (CurrentUser.RoleId==2){<button class="btn btn-primary" style="margin: 5px" onclick=>Rediger</button>} else if (vagt.Locked==false && GetUserShift(vagt.ShiftId.Value)){<button class="btn btn-primary" style="margin: 5px" onclick=>Tilmeld</button>}</td>
+                <td> @if (CurrentUser.RoleId==2){<button class="btn btn-primary" style="margin: 5px" onclick=>Rediger</button>} else if (vagt.Locked==false && GetUserShift(vagt.ShiftId.Value).Result){<button class="btn btn-primary" style="margin: 5px" onclick=>Tilmeld</button>}</td>
             </tr>
         }
     }
@@ -45,7 +45,7 @@
     public List<Shift> vagtliste = new List<Shift>();
     public Filter filter = new Filter();
     public Shift ShiftModel = new Shift();
-    public bool editShift
+    public bool editShift;
 
     protected override async Task OnInitializedAsync()
     {
@@ -73,7 +73,14 @@
 
     public async Task<bool> GetUserShift(int shiftid)
     {
-        UserShift? result = await ShiftService.GetUserShift(CurrentUser.UserId.Value, shiftid);
-        return result != null;
+        UserShift? response = await ShiftService.GetUserShift(CurrentUser.UserId.Value, shiftid);
+        bool result = new bool(); 
+        if (response != null)
+        {
+            result = true;
+        }
+        result = false;
+
+        return result;
     }
 }
