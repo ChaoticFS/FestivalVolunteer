@@ -1,4 +1,7 @@
 ﻿using Npgsql;
+using Azure.Security.KeyVault.Secrets;
+using Azure.Identity;
+using Azure.Extensions.AspNetCore.Configuration.Secrets;
 
 namespace FestivalVolunteer.Server.Models
 {
@@ -7,7 +10,9 @@ namespace FestivalVolunteer.Server.Models
         public readonly NpgsqlConnection conn;
         public DBContext()
         {
-            string connString = "User ID=starfest;Password={password};Host=starfest.postgres.database.azure.com;Port=5432;Database=starfest";
+            var kvUrl = "https://starfestkv.vault.azure.net/";
+            var secretClient = new SecretClient(new Uri(kvUrl), new DefaultAzureCredential());
+            string connString = secretClient.GetSecret("starfest").ToString();
             conn = new NpgsqlConnection(connString);
         }
     }
