@@ -1,1 +1,98 @@
-﻿@page "/vagtoversigt"
+﻿@inject Blazored.LocalStorage.ILocalStorageService localStore;
+@using FestivalVolunteer.Shared.Models;
+@using FestivalVolunteer.Client.Services;
+
+@page "/vagtoversigt"
+
+<div class="text-center">
+    <h1>Dine vagter</h1>
+</div>
+
+<div class="form-check-inline">
+    <button class="btn btn-dark" @onclick="@StateHasChanged"> Genindlæs </button>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Dato</th>
+            <th>Tidspunkt</th>
+            <th>Prioritet</th>
+            <th>Vagt</th>
+            <th>Område</th>
+            <th>Vagtstatus</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (vagtList.Any<Shift>())
+        {
+            @foreach (var vagt in vagtList)
+            {
+                <tr>
+                    <td> @vagt.StartTime.ToString("dd-MM") </td>
+                    <td> @vagt.StartTime.ToString("HH:mm") - @vagt.EndTime.ToString("HH:mm") </td>
+                    @switch (vagt.Priority)
+                    {
+                        case 1:
+                            <td> Lav </td>;
+                        break;
+                        case 2:
+                            <td> Mellem </td>;
+                        break;
+                        case 3:
+                            <td> Høj </td>;
+                        break;
+                        case 4:
+                            <td> Presset </td>;
+                        break;
+                        default:
+                            <td> Ukendt </td>;
+                        break;
+                    }
+                    <td> @vagt.Name</td>
+                    <td> @vagt.Area </td>
+                    @if (vagt.Locked)
+                    {
+                        <td> Låst </td>
+                    }
+                    else
+                    {
+                        <td> Ikke låst </td>
+                    }
+                </tr>
+            } 
+        }
+    </tbody>
+</table>
+
+@code {
+    [Inject]
+    public IShiftService ShiftService { get; set; }
+
+    [Inject]
+    public IUserService UserService { get; set; }
+
+    public User CurrentUser;
+    public List<Shift> vagtList = new List<Shift>();
+    public Filter filter = new Filter();
+    public string Default = "N/A";
+
+    protected override async Task OnInitializedAsync()
+    {
+        CurrentUser = await localStore.GetItemAsync<User>("user");
+        if (CurrentUser != null && CurrentUser.TeamId != null)
+        {
+            vagtList.Clear();
+            filter.TeamId = CurrentUser.TeamId.Value;
+            LoadShifts(filter);
+        }
+    }
+
+    public async void LoadShifts(Filter filter)
+    {
+        @if (CurrentUser.UserId != null)
+        {
+            vagtList = (await ShiftService.GetAllShiftsForUser(CurrentUser.UserId.Value)).ToList();
+        }
+    }
+}

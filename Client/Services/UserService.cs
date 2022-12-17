@@ -17,15 +17,16 @@ namespace FestivalVolunteer.Client.Services
             var result = httpClient.GetFromJsonAsync<User>($"api/user?userid={userid}");
             return result;
         }
-        public Task PostUser(User user)
+        public async Task<int> PostUser(User user)
         {
-            httpClient.PostAsJsonAsync<User>("api/user", user);
-            return Task.CompletedTask;
+            Console.WriteLine("Post user called");
+            var response = await httpClient.PostAsJsonAsync<User>("api/user", user);
+            string result = await response.Content.ReadAsStringAsync();
+            return int.Parse(result);
         }
-        public Task PutUser(User user)
+        public async Task PutUser(User user)
         {
-            httpClient.PutAsJsonAsync<User>("api/user", user);
-            return Task.CompletedTask;
+            await httpClient.PutAsJsonAsync<User>("api/user", user);
         }
         public Task DeleteUser(int userid)
         {

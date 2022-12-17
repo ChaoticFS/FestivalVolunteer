@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace FestivalVolunteer.Shared.Models
 {
-    public class Team
+    public class UserShift
     {
-        public int? TeamId { get; set; }
-        public string Name { get; set; }
+        public int UserId { get; set; }
+        public int ShiftId { get; set; }
     }
 }

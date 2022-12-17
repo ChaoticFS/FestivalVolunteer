@@ -19,9 +19,15 @@ namespace FestivalVolunteer.Server.Controllers
         }
 
         [HttpGet("members")]
-        public List<User> GetTeamMembers(int teamid)
+        public IEnumerable<User> GetTeamMembers(int teamid)
         {
             return Repository.GetTeamMembers(teamid);
+        }
+
+        [HttpGet("teams")]
+        public IEnumerable<Team> GetAllTeams()
+        {
+            return Repository.GetAllTeams();
         }
 
         [HttpGet]
@@ -33,6 +39,7 @@ namespace FestivalVolunteer.Server.Controllers
         [HttpPost]
         public void PostTeam(Team team)
         {
+            Console.WriteLine("Post team called");
             Repository.PostTeam(team);
         }
 
