@@ -1,7 +1,6 @@
 ﻿using Npgsql;
 using Azure.Security.KeyVault.Secrets;
 using Azure.Identity;
-using Azure.Extensions.AspNetCore.Configuration.Secrets;
 
 namespace FestivalVolunteer.Server.Models
 {
