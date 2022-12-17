@@ -196,6 +196,15 @@ namespace FestivalVolunteer.Server.Models
             }
         }
 
+        public int GetUserShiftCount(int shiftid)
+        {
+            var sql = $"SELECT COUNT(user_id) " +
+                      $"FROM user_shift " +
+                      $"WHERE shift_id={shiftid};";
+
+            return db.conn.Query<int>(sql).First();
+        }
+
         public void PostUserToShift(UserShift userShift)
         {
             try

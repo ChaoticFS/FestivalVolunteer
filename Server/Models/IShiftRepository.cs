@@ -12,6 +12,7 @@ namespace FestivalVolunteer.Server.Models
         List<UserShift> GetAllUsersForShift(int shiftid);
         bool GetUserShift(int userid, int shiftid);
         List<Shift> GetAllShiftsForUser(int userid);
+        public int GetUserShiftCount(int shiftid);
         void PostUserToShift(UserShift userShift);
         void DeleteUserShift(int userid, int shiftid);
     }

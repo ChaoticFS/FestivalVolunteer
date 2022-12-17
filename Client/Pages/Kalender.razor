@@ -28,7 +28,7 @@
             <div class="form-check-inline col-md-2">
                 <label for="Locked"> Vagtstatus </label>
                 <InputSelect @bind-Value="FilterModel.Locked" class="form-select">
-                    <option value="@BoolFilter.Locked"> Ingen filtrering </option>
+                    <option value="@EmptyFilter.Locked"> Ingen filtrering </option>
                     <option value="false"> Ikke låst </option>
                     <option value="true"> Låst </option>
                 </InputSelect>
@@ -137,10 +137,12 @@
     <thead>
         <tr>
             <th>Dato</th>
-            <th>Arbejdende</th>
+            <th>Prioritet</th>
             <th>Vagt</th>
             <th>Område</th>
+            <th>Tilmeldte</th>
             <th>Tidspunkt</th>
+            <th>Vagtstatus</th>
         </tr>
     </thead>
     @if (vagtList.Any<Shift>())
@@ -152,18 +154,36 @@
             <tbody>
                 <tr>
                     <td> @vagt.StartTime.ToString("dd-MM") </td>
-                    <td> 
-                        @foreach (var member in teamMembers)
-                        {
-                            foreach (var item in vagtList)
-                            {
-                                
-                            }
-                        }
-                    </td>
+                    @switch (vagt.Priority)
+                    {
+                        case 1:
+                            <td> Lav </td>;
+                        break;
+                        case 2:
+                            <td> Mellem </td>;
+                        break;
+                        case 3:
+                            <td> Høj </td>;
+                        break;
+                        case 4:
+                            <td> Presset </td>;
+                        break;
+                        default:
+                            <td> Ukendt </td>;
+                        break;
+                    }
                     <td> @vagt.Name </td>
                     <td> @vagt.Area </td>
+                    <td> @vagtCount[count]/@vagt.VolunteersNeeded </td>
                     <td> @vagt.StartTime.ToString("HH:mm") - @vagt.EndTime.ToString("HH:mm") </td>
+                    @if (vagt.Locked)
+                    {
+                        <td> Låst </td>
+                    }
+                    else
+                    {
+                        <td> Ikke låst </td>
+                    }
                     <td> 
                         @if (CurrentUser.RoleId==2)
                         {
@@ -196,12 +216,15 @@
     public ITeamService TeamService { get; set; }
 
     public User CurrentUser;
-    public List<User> teamMembers = new List<User>();
+
     public List<Shift> vagtList = new List<Shift>();
     public List<bool?> vagtUserList = new List<bool?>();
+    public List<int> vagtCount = new List<int>();
+
     public Filter FilterModel = new Filter();
-    public Filter BoolFilter = new Filter();
+    public Filter EmptyFilter = new Filter();
     public Shift ShiftModel = new Shift();
+
     public bool editShift;
     public bool registerShift;
 
@@ -223,7 +246,6 @@
         {
             FilterModel.TeamId = CurrentUser.TeamId.Value;
             LoadShifts();
-            LoadTeamMembers();
         }
     }
 
@@ -237,19 +259,15 @@
             if (vagt.ShiftId != null)
             {
                 vagtUserList.Add(await GetUserShift(vagt.ShiftId.Value, CurrentUser.UserId.Value));
+                vagtCount.Add(await ShiftService.GetUserShiftCount(vagt.ShiftId.Value));
             }
             else
             {
                 vagtUserList.Add(null);
+                vagtCount.Add(0);
             }
         }
         StateHasChanged();
-    }
-
-    public async void LoadTeamMembers()
-    {
-        teamMembers = new List<User>();
-        teamMembers = (await TeamService.GetTeamMembers(CurrentUser.TeamId.Value)).ToList();
     }
 
     public void EditShift(Shift shift)

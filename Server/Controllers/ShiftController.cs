@@ -73,6 +73,12 @@ namespace FestivalVolunteer.Server.Controllers
             return Repository.GetAllShiftsForUser(userid);
         }
 
+        [HttpGet("usershift/getcount")]
+        public int GetUserShiftCount(int shiftid) 
+        {
+            return Repository.GetUserShiftCount(shiftid);
+        }
+
         [HttpPost("usershift")]
         public void PostUserToShift(UserShift userShift)
         {

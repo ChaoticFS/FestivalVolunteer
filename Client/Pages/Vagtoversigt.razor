@@ -16,9 +16,11 @@
     <thead>
         <tr>
             <th>Dato</th>
-            <th>Stilling</th>
-            <th>Område</th>
             <th>Tidspunkt</th>
+            <th>Prioritet</th>
+            <th>Vagt</th>
+            <th>Område</th>
+            <th>Vagtstatus</th>
         </tr>
     </thead>
     <tbody>
@@ -28,9 +30,35 @@
             {
                 <tr>
                     <td> @vagt.StartTime.ToString("dd-MM") </td>
-                    <td> @if (CurrentUser.TeamId != null){@CurrentUser.Name} else{@Default}</td>
-                    <td> @vagt.Area </td>
                     <td> @vagt.StartTime.ToString("HH:mm") - @vagt.EndTime.ToString("HH:mm") </td>
+                    @switch (vagt.Priority)
+                    {
+                        case 1:
+                            <td> Lav </td>;
+                        break;
+                        case 2:
+                            <td> Mellem </td>;
+                        break;
+                        case 3:
+                            <td> Høj </td>;
+                        break;
+                        case 4:
+                            <td> Presset </td>;
+                        break;
+                        default:
+                            <td> Ukendt </td>;
+                        break;
+                    }
+                    <td> @vagt.Name</td>
+                    <td> @vagt.Area </td>
+                    @if (vagt.Locked)
+                    {
+                        <td> Låst </td>
+                    }
+                    else
+                    {
+                        <td> Ikke låst </td>
+                    }
                 </tr>
             } 
         }
