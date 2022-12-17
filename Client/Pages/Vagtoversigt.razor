@@ -54,6 +54,7 @@
         CurrentUser = await localStore.GetItemAsync<User>("user");
         if (CurrentUser != null && CurrentUser.TeamId != null)
         {
+            vagtList.Clear();
             filter.TeamId = CurrentUser.TeamId.Value;
             LoadShifts(filter);
         }
@@ -61,6 +62,9 @@
 
     public async void LoadShifts(Filter filter)
     {
-        vagtList = (await ShiftService.GetFilteredShifts(filter)).ToList();
+        @if (CurrentUser.UserId != null)
+        {
+            vagtList = (await ShiftService.GetAllShiftsForUser(CurrentUser.UserId.Value)).ToList();
+        }
     }
 }

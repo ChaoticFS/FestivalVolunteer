@@ -26,13 +26,7 @@ namespace FestivalVolunteer.Server.Models
             catch (Exception e )
             {
                 Console.WriteLine(e.Message);
-
-                var sql = "SELECT * " +
-                          "FROM shift";
-
-                Console.WriteLine(sql);
-
-                return db.conn.Query<Shift>(sql);
+                return Enumerable.Empty<Shift>();
             }
         }
 
@@ -122,18 +116,42 @@ namespace FestivalVolunteer.Server.Models
         {
             var sql = $"UPDATE shift " +
                       $"SET " +
-                        $"start_time = {shift.StartTime}, " +
-                        $"end_time = {shift.EndTime}, " +
-                        $"name = {shift.Name}, " +
-                        $"area = {shift.Area}, " +
+                        $"start_time = TIMESTAMP '{shift.StartTime.ToString("yyyy-MM-dd HH:mm:ss")}', " +
+                        $"end_time = TIMESTAMP '{shift.EndTime.ToString("yyyy-MM-dd HH:mm:ss")}', " +
+                        $"name = '{shift.Name}', " +
+                        $"area = '{shift.Area}', " +
                         $"volunteers_needed = {shift.VolunteersNeeded}, " +
                         $"priority = {shift.Priority}, " +
-                        $"locked = {shift.Locked} " +
+                        $"locked = {shift.Locked}, " +
                         $"team_id = {shift.TeamId} " +
                       $"WHERE shift_id = {shift.ShiftId}";
 
+            Console.WriteLine(sql);
+
             db.conn.Execute(sql);
         }
+
+        public List<UserShift> GetAllUsersForShift(int shiftid)
+        {
+            var sql = $"SELECT * " +
+                      $"FROM user_shift " +
+                      $"WHERE shift_id={shiftid};";
+
+            List<UserShift> result = new List<UserShift>();
+
+            try
+            {
+                var response = db.conn.Query<UserShift>(sql);
+                result = response.ToList<UserShift>();
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return result;
+            }
+        }
+
         public bool GetUserShift(int userid, int shiftid)
         {
             var sql = $"SELECT * " +
@@ -152,12 +170,58 @@ namespace FestivalVolunteer.Server.Models
             }
         }
 
+        public List<Shift> GetAllShiftsForUser(int userid)
+        {
+            var sql = $"SELECT * " +
+                      $"FROM user_shift " +
+                      $"WHERE user_id={userid}";
+
+            List<Shift> result = new List<Shift>();
+
+            try
+            {
+                var response = db.conn.Query<UserShift>(sql);
+
+                foreach (var userShift in response)
+                {
+                    result.Add(GetShift(userShift.ShiftId));
+                }
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(sql, ex);
+                return result;
+            }
+        }
+
         public void PostUserToShift(UserShift userShift)
         {
-            var sql = $"INSERT INTO user_shift(user_id, shift_id) " +
-                      $"VALUES ({userShift.UserId}, {userShift.ShiftId})";
+            try
+            {
+                var validationsql = $"SELECT * " +
+                    $"FROM user_shift " +
+                    $"WHERE user_id={userShift.UserId} " +
+                    $"AND shift_id={userShift.ShiftId};";
 
-            db.conn.Execute(sql);
+                Console.WriteLine(validationsql);
+
+                var result = db.conn.Query<UserShift>(validationsql).First();
+            }
+            catch (InvalidOperationException e)
+            {
+                var sql = $"INSERT INTO user_shift(user_id, shift_id) " +
+                            $"VALUES ({userShift.UserId}, {userShift.ShiftId});";
+
+                Console.WriteLine(e.Message, sql);
+
+                db.conn.Execute(sql);
+            }
+            finally
+            {
+                Console.WriteLine($"User posted to shift: {userShift.ShiftId}");
+            }
         }
         public void DeleteUserShift(int userid, int shiftid)
         {

@@ -44,10 +44,21 @@ namespace FestivalVolunteer.Client.Services
             return Task.CompletedTask;
         }
 
+        public async Task<UserShift[]> GetAllUsersForShift(int shiftid)
+        {
+            var result = await httpClient.GetFromJsonAsync<UserShift[]>($"api/shift/usershift/getusers?shiftid={shiftid}");
+            return result;
+        }
+
         public async Task<bool> GetUserShift(UserShift userShift)
         {
             string request = JsonSerializer.Serialize(userShift);
             var result = await httpClient.GetFromJsonAsync<bool>($"api/shift/usershift?usershift={request}");
+            return result;
+        }
+        public async Task<Shift[]> GetAllShiftsForUser(int userid)
+        {
+            var result = await httpClient.GetFromJsonAsync<Shift[]>($"api/shift/usershift/getall?userid={userid}");
             return result;
         }
 

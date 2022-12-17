@@ -9,7 +9,9 @@ namespace FestivalVolunteer.Client.Services
         Task PostShift(Shift shift);
         Task DeleteShift(int shiftid);
         Task PutShift(Shift shift);
+        Task<UserShift[]> GetAllUsersForShift(int shiftid);
         Task<bool> GetUserShift(UserShift userShift);
+        Task<Shift[]> GetAllShiftsForUser(int userid);
         Task PostUserToShift(UserShift userShift);
         Task DeleteUserShift(UserShift userShift);
     }

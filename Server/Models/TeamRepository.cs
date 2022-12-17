@@ -17,7 +17,7 @@ namespace FestivalVolunteer.Server.Models
         {
             var sql = $"SELECT * " +
                       $"FROM users " +
-                      $"WHERE team_id={teamid}";
+                      $"WHERE team_id={teamid};";
 
             return db.conn.Query<User>(sql);
         }

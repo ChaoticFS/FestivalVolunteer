@@ -54,11 +54,23 @@ namespace FestivalVolunteer.Server.Controllers
             Repository.DeleteShift(shiftid);
         }
 
+        [HttpGet("usershift/getusers")]
+        public List<UserShift> GetAllUsersForShift(int shiftid)
+        {
+            return Repository.GetAllUsersForShift(shiftid);
+        }
+
         [HttpGet("usershift")]
         public bool GetUserShift(string usershift)
         {
             UserShift userShift = JsonSerializer.Deserialize<UserShift>(usershift);
             return Repository.GetUserShift(userShift.UserId, userShift.ShiftId);
+        }
+        
+        [HttpGet("usershift/getall")]
+        public List<Shift> GetAllShiftsForUser(int userid)
+        {
+            return Repository.GetAllShiftsForUser(userid);
         }
 
         [HttpPost("usershift")]
