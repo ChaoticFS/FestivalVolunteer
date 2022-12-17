@@ -55,9 +55,10 @@ namespace FestivalVolunteer.Server.Controllers
         }
 
         [HttpGet("usershift")]
-        public IEnumerable<UserShift> GetUserShift(int userid, int shiftid)
+        public bool GetUserShift(string usershift)
         {
-            return Repository.GetUserShift(userid, shiftid);
+            UserShift userShift = JsonSerializer.Deserialize<UserShift>(usershift);
+            return Repository.GetUserShift(userShift.UserId, userShift.ShiftId);
         }
 
         [HttpPost("usershift")]
@@ -67,9 +68,10 @@ namespace FestivalVolunteer.Server.Controllers
         }
 
         [HttpDelete("usershift")]
-        public void DeleteUserShift(int userid, int shiftid)
+        public void DeleteUserShift(string usershift)
         {
-            Repository.DeleteUserShift(userid, shiftid);
+            UserShift userShift = JsonSerializer.Deserialize<UserShift>(usershift);
+            Repository.DeleteUserShift(userShift.UserId, userShift.ShiftId);
         }
     }
 }

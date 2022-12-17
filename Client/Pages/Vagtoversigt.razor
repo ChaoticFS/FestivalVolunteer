@@ -8,6 +8,10 @@
     <h1>Dine vagter</h1>
 </div>
 
+<div class="form-check-inline">
+    <button class="btn btn-dark" @onclick="@StateHasChanged"> Genindlæs </button>
+</div>
+
 <table class="table">
     <thead>
         <tr>
@@ -18,9 +22,9 @@
         </tr>
     </thead>
     <tbody>
-        @if (vagtliste.Any<Shift>())
+        @if (vagtList.Any<Shift>())
         {
-            @foreach (var vagt in vagtliste)
+            @foreach (var vagt in vagtList)
             {
                 <tr>
                     <td> @vagt.StartTime.ToString("dd-MM") </td>
@@ -41,7 +45,7 @@
     public IUserService UserService { get; set; }
 
     public User CurrentUser;
-    public List<Shift> vagtliste = new List<Shift>();
+    public List<Shift> vagtList = new List<Shift>();
     public Filter filter = new Filter();
     public string Default = "N/A";
 
@@ -50,7 +54,6 @@
         CurrentUser = await localStore.GetItemAsync<User>("user");
         if (CurrentUser != null && CurrentUser.TeamId != null)
         {
-            filter.UserId = CurrentUser.UserId.Value;
             filter.TeamId = CurrentUser.TeamId.Value;
             LoadShifts(filter);
         }
@@ -58,6 +61,6 @@
 
     public async void LoadShifts(Filter filter)
     {
-        vagtliste = (await ShiftService.GetFilteredShifts(filter)).ToList();
+        vagtList = (await ShiftService.GetFilteredShifts(filter)).ToList();
     }
 }

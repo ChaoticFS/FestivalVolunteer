@@ -8,12 +8,11 @@ namespace FestivalVolunteer.Shared.Models
 {
     public class Filter
     {
-        public string? Date { get; set; }
+        public DateTime? Date { get; set; }
         public string? Area { get; set; }
         public int? VolunteersNeeded { get; set; }
         public int? Priority { get; set; }
         public bool? Locked { get; set; }
         public int TeamId { get; set; }
-        public int? UserId { get; set; }
     }
 }

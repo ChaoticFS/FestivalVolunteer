@@ -8,6 +8,100 @@
     <h1>Vagtoversigt</h1>
 </div>
 
+<div>
+    @if (CurrentUser != null)
+    {
+        @if (CurrentUser.RoleId == 2)
+        {
+            <button class="btn btn-primary" style="margin-bottom: 5px" onclick=@CreateShift>Opret Vagt</button>
+        }
+    }
+
+    @if (registerShift)
+    {
+    <EditForm Model="ShiftModel"
+          OnValidSubmit="@HandleValidShiftRegistry"
+          OnInvalidSubmit="@HandleInvalidShiftRegistry">
+        <div class="form-check-inline col-sm-3">
+            <label for="StartTime"> Starttid </label>
+            <InputDate Type="InputDateType.DateTimeLocal" @bind-Value="ShiftModel.StartTime" class="form-control"/>
+        </div>
+        <div class="form-check-inline col-sm-3">
+            <label for="EndTime"> Sluttid </label>
+            <InputDate Type="InputDateType.DateTimeLocal" @bind-Value="ShiftModel.EndTime" class="form-control"/>
+        </div>
+        <div class="form-row col-sm-4">
+            <label for="Name"> Navn </label>
+            <InputText @bind-Value="ShiftModel.Name" class="form-control" />
+        </div>
+        <div class="form-row col-sm-4">
+            <label for="Area"> Område </label>
+            <InputText @bind-Value="ShiftModel.Area" class="form-control" />
+        </div>
+        <div class="form-check-inline col-sm-2">
+            <label for="VolunteersNeeded"> Mængde Frivillige </label>
+            <InputNumber min="1" @bind-Value="ShiftModel.VolunteersNeeded" class="form-control" />
+        </div>
+        <div class="form-check-inline col-sm-2">
+            <label for="Priority"> Prioritet </label>
+            <InputSelect @bind-Value="ShiftModel.Priority" class="form-select">
+                <option value="1"> Lav </option>
+                <option value="2"> Mellem </option>
+                <option value="3"> Høj </option>
+                <option value="4"> Presset </option>
+            </InputSelect>
+        </div>
+        <div class="div-form" style="margin-top: 5px; margin-bottom: 5px;">
+            <button type="submit" class="btn btn-primary">Registrer Vagt</button>
+        </div>
+    </EditForm>
+    }
+
+    @if (editShift)
+    {
+    <EditForm Model="ShiftModel"
+          OnValidSubmit="@HandleValidShiftEdit"
+          OnInvalidSubmit="@HandleInvalidShiftEdit">
+        <div class="div-form">
+
+        </div>
+        <div class="div-form">
+            <button type="submit" class="btn btn-primary">Rediger Vagt</button>
+        </div>
+    </EditForm>
+    }
+
+    <EditForm Model="FilterModel">
+        <div>
+            <div class="form-check-inline col-sm-2">
+                <label for="Date"> Dato </label>
+                <InputDate id="Date" @bind-Value="FilterModel.Date" class="form-control" />
+            </div>
+            <div class="form-check-inline col-sm-2">
+                <label for="Priority"> Prioritet </label>
+                <InputSelect @bind-Value="FilterModel.Priority" class="form-select">
+                    <option value=""> Vælg Prioritet </option>
+                    <option value="1"> Lav </option>
+                    <option value="2"> Mellem </option>
+                    <option value="3"> Høj </option>
+                    <option value="4"> Presset </option>
+                </InputSelect>
+            </div>
+            <div class="form-check-inline col-md-2">
+                <label for="Locked"> Vagtstatus </label>
+                <InputSelect @bind-Value="FilterModel.Locked" class="form-select">
+                    <option value="@BoolFilter.Locked"> Ingen filtrering </option>
+                    <option value="false"> Ikke låst </option>
+                    <option value="true"> Låst </option>
+                </InputSelect>
+            </div>
+            <div class="form-check-inline">
+                <button class="btn btn-dark" @onclick="@LoadShifts"> Genindlæs </button>
+            </div>
+        </div>
+    </EditForm>
+</div>
+
 <table class="table">
     <thead>
         <tr>
@@ -18,18 +112,36 @@
             <th>Tidspunkt</th>
         </tr>
     </thead>
-    @if (vagtliste.Any<Shift>())
+    @if (vagtList.Any<Shift>())
     {
-        @foreach (var vagt in vagtliste)
+        count = 0;
+
+        @foreach (var vagt in vagtList)
         {
-            <tr>
-                <td> @vagt.StartTime.ToString("dd-MM") </td>
-                <td> foreach loop med alle på denne vagt her (husk linebreaks) </td>
-                <td> @vagt.Name </td>
-                <td> @vagt.Area </td>
-                <td> @vagt.StartTime.ToString("HH:mm") - @vagt.EndTime.ToString("HH:mm") </td>
-                <td> @if (CurrentUser.RoleId==2){<button class="btn btn-primary" style="margin: 5px" onclick=>Rediger</button>} else if (vagt.Locked==false && GetUserShift(vagt.ShiftId.Value).Result){<button class="btn btn-primary" style="margin: 5px" onclick=>Tilmeld</button>}</td>
-            </tr>
+            <tbody>
+                <tr>
+                    <td> @vagt.StartTime.ToString("dd-MM") </td>
+                    <td> foreach loop med alle på denne vagt her (husk linebreaks) </td>
+                    <td> @vagt.Name </td>
+                    <td> @vagt.Area </td>
+                    <td> @vagt.StartTime.ToString("HH:mm") - @vagt.EndTime.ToString("HH:mm") </td>
+                    <td> 
+                        @if (CurrentUser.RoleId==2)
+                        {
+                            <button class="btn btn-primary" @onclick="(() => EditShift(vagt))"> Rediger </button>
+                        }
+                        @if (vagt.Locked == false && IsTrue(vagtUserList[count]))
+                        {
+                            <button class="btn btn-dark" @onclick="(() => Afmeld(vagt.ShiftId.Value))"> Afmeld </button>
+                        }
+                        else 
+                        {
+                            <button class="btn btn-dark" @onclick="(() => Tilmeld(vagt.ShiftId.Value))"> Tilmeld </button>
+                        }
+                    </td>
+                </tr>
+            </tbody>
+            count++;
         }
     }
 </table>
@@ -42,45 +154,127 @@
     public IUserService UserService { get; set; }
 
     public User CurrentUser;
-    public List<Shift> vagtliste = new List<Shift>();
-    public Filter filter = new Filter();
+    public List<Shift> vagtList = new List<Shift>();
+    public List<bool?> vagtUserList = new List<bool?>();
+    public Filter FilterModel = new Filter();
+    public Filter BoolFilter = new Filter();
     public Shift ShiftModel = new Shift();
     public bool editShift;
+    public bool registerShift;
+
+    public int count;
+
+    public bool IsTrue(bool? boolean)
+    {
+        if (boolean == true)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    public void Refresh()
+    {
+        StateHasChanged();
+    }
 
     protected override async Task OnInitializedAsync()
     {
         CurrentUser = await localStore.GetItemAsync<User>("user");
         if (CurrentUser != null && CurrentUser.TeamId != null)
         {
-            filter.TeamId = CurrentUser.TeamId.Value;
-            LoadShifts(filter);
+            FilterModel.TeamId = CurrentUser.TeamId.Value;
+            LoadShifts();
         }
     }
 
-    public async void LoadShifts(Filter filter)
+    public async void LoadShifts()
     {
-        vagtliste = (await ShiftService.GetFilteredShifts(filter)).ToList();
-    }
-
-    public async void EditShift(Shift shift)
-    {
-        editShift = !editShift;
-        if (editShift)
+        vagtList = new List<Shift>();
+        Filter filter = FilterModel;
+        vagtList = (await ShiftService.GetFilteredShifts(filter)).ToList();
+        foreach (var vagt in vagtList)
         {
-            ShiftModel = shift;
+            if (vagt.ShiftId != null)
+            {
+                vagtUserList.Add(await GetUserShift(vagt.ShiftId.Value));
+            }
+            else
+            {
+                vagtUserList.Add(null);
+            }
         }
+        StateHasChanged();
+    }
+
+    public void EditShift(Shift shift)
+    {
+        ShiftModel = shift;
+        registerShift = false;
+        editShift = !editShift;
+    }
+
+    public void CreateShift()
+    {
+        ShiftModel = new Shift();
+        ShiftModel.Priority = 1;
+        editShift = false;
+        registerShift = !registerShift;
+    }
+
+    public async void Afmeld(int shiftid)
+    {
+        UserShift usershift = new UserShift();
+        usershift.ShiftId = shiftid;
+        usershift.UserId = CurrentUser.UserId.Value;
+
+        await ShiftService.DeleteUserShift(usershift);
+
+        StateHasChanged();
+    }
+
+    public async void Tilmeld(int shiftid)
+    {
+        UserShift usershift = new UserShift();
+        usershift.ShiftId = shiftid;
+        usershift.UserId = CurrentUser.UserId.Value;
+
+        await ShiftService.PostUserToShift(usershift);
+
+        StateHasChanged();
     }
 
     public async Task<bool> GetUserShift(int shiftid)
     {
-        UserShift? response = await ShiftService.GetUserShift(CurrentUser.UserId.Value, shiftid);
-        bool result = new bool(); 
-        if (response != null)
-        {
-            result = true;
-        }
-        result = false;
+        bool result = false;
+        UserShift request = new UserShift();
+        request.ShiftId = shiftid;
+        request.UserId = CurrentUser.UserId.Value;
 
-        return result;
+        return await ShiftService.GetUserShift(request);
+    }
+
+    public async void HandleValidShiftRegistry()
+    {
+        ShiftModel.Locked = false;
+        ShiftModel.TeamId = CurrentUser.TeamId.Value;
+        await ShiftService.PostShift(ShiftModel);
+        ShiftModel = new Shift();
+        StateHasChanged();
+    }
+
+    public async void HandleInvalidShiftRegistry()
+    {
+        Console.WriteLine("Invalid shift registry");
+    }
+
+    public async void HandleValidShiftEdit()
+    {
+        await ShiftService.PutShift(ShiftModel);
+    }
+
+    public async void HandleInvalidShiftEdit()
+    {
+        Console.WriteLine("Invalid shift edit");
     }
 }

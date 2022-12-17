@@ -15,29 +15,13 @@ namespace FestivalVolunteer.Server.Models
 
         public IEnumerable<Shift> GetFilteredShifts(Filter filter)
         {
-            if (filter.UserId != null)
-            {
-                var usersql = $"SELECT * " +
-                              $"FROM shift " +
-                              $"{ConstructWhereFromFilter(filter)}";
-
-                try
-                {
-                    return db.conn.Query<Shift>(usersql);
-                }
-                catch (Exception e) 
-                {
-                    Console.WriteLine($"Exception: {e.Message}, user has no associated shifts");
-                }
-            }
-
             try
             {
-                var teamsql = $"SELECT * " +
+                var sql = $"SELECT * " +
                               $"FROM shift " +
-                              $"{ConstructWhereFromFilter(filter)}";
+                              $"{ConstructWhereFromFilter(filter)};";
 
-                return db.conn.Query<Shift>(teamsql);
+                return db.conn.Query<Shift>(sql);
             }
             catch (Exception e )
             {
@@ -45,6 +29,8 @@ namespace FestivalVolunteer.Server.Models
 
                 var sql = "SELECT * " +
                           "FROM shift";
+
+                Console.WriteLine(sql);
 
                 return db.conn.Query<Shift>(sql);
             }
@@ -55,14 +41,9 @@ namespace FestivalVolunteer.Server.Models
             string whereString = "";
             List<string> filterList = new List<string>();
 
-            if (filter.UserId != null)
-            {
-                filterList.Add($"user_id={filter.UserId}");
-            }
-
             if (filter.Date != null)
             {
-                filterList.Add($"start_time={filter.Date}");
+                filterList.Add($"start_time::date ='{filter.Date.Value.ToString("yyyy-MM-dd")}'");
             }
             
             if (filter.Area != null) 
@@ -153,14 +134,22 @@ namespace FestivalVolunteer.Server.Models
 
             db.conn.Execute(sql);
         }
-        public IEnumerable<UserShift> GetUserShift(int userid, int shiftid)
+        public bool GetUserShift(int userid, int shiftid)
         {
             var sql = $"SELECT * " +
                       $"FROM user_shift " +
                       $"WHERE user_id={userid} " +
                       $"AND shift_id={shiftid}";
-
-            return db.conn.Query<UserShift>(sql);
+            try
+            {
+                var result = db.conn.Query<UserShift>(sql).First();
+                return result != null;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return false;
+            }
         }
 
         public void PostUserToShift(UserShift userShift)

@@ -44,9 +44,10 @@ namespace FestivalVolunteer.Client.Services
             return Task.CompletedTask;
         }
 
-        public Task<UserShift> GetUserShift(int userid, int shiftid)
+        public async Task<bool> GetUserShift(UserShift userShift)
         {
-            var result = httpClient.GetFromJsonAsync<UserShift>($"api/shift/usershift?userid={userid}");
+            string request = JsonSerializer.Serialize(userShift);
+            var result = await httpClient.GetFromJsonAsync<bool>($"api/shift/usershift?usershift={request}");
             return result;
         }
 
@@ -58,7 +59,8 @@ namespace FestivalVolunteer.Client.Services
 
         public Task DeleteUserShift(UserShift userShift)
         {
-            httpClient.DeleteAsync($"api/shift/usershift?userid={userShift.UserId},shiftid={userShift.ShiftId}");
+            string request = JsonSerializer.Serialize(userShift);
+            httpClient.DeleteAsync($"api/shift/usershift?usershift={request}");
             return Task.CompletedTask;
         }
     }
