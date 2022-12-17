@@ -9,13 +9,44 @@
 </div>
 
 <div>
-    @if (CurrentUser != null)
-    {
-        @if (CurrentUser.RoleId == 2)
-        {
-            <button class="btn btn-primary" style="margin-bottom: 5px" onclick=@CreateShift>Opret Vagt</button>
-        }
-    }
+    <EditForm Model="FilterModel">
+        <div>
+            <div class="form-check-inline col-sm-2">
+                <label for="Date"> Dato </label>
+                <InputDate id="Date" @bind-Value="FilterModel.Date" class="form-control" />
+            </div>
+            <div class="form-check-inline col-sm-2">
+                <label for="Priority"> Prioritet </label>
+                <InputSelect @bind-Value="FilterModel.Priority" class="form-select">
+                    <option value=""> Vælg Prioritet </option>
+                    <option value="1"> Lav </option>
+                    <option value="2"> Mellem </option>
+                    <option value="3"> Høj </option>
+                    <option value="4"> Presset </option>
+                </InputSelect>
+            </div>
+            <div class="form-check-inline col-md-2">
+                <label for="Locked"> Vagtstatus </label>
+                <InputSelect @bind-Value="FilterModel.Locked" class="form-select">
+                    <option value="@BoolFilter.Locked"> Ingen filtrering </option>
+                    <option value="false"> Ikke låst </option>
+                    <option value="true"> Låst </option>
+                </InputSelect>
+            </div>
+            <div class="form-check-inline">
+                <button class="btn btn-dark" @onclick="@LoadShifts"> Genindlæs </button>
+            </div>
+            @if (CurrentUser != null)
+            {
+                @if (CurrentUser.RoleId == 2)
+                {
+                    <button class="btn btn-primary" style="margin-bottom: 5px" onclick=@CreateShift>Opret Vagt</button>
+                }
+            }
+        </div>
+    </EditForm>
+    
+    <hr />
 
     @if (registerShift)
     {
@@ -51,7 +82,7 @@
                 <option value="4"> Presset </option>
             </InputSelect>
         </div>
-        <div class="div-form" style="margin-top: 5px; margin-bottom: 5px;">
+        <div class="div-form" style="margin-top: 10px; margin-bottom: 10px;">
             <button type="submit" class="btn btn-primary">Registrer Vagt</button>
         </div>
     </EditForm>
@@ -70,36 +101,6 @@
         </div>
     </EditForm>
     }
-
-    <EditForm Model="FilterModel">
-        <div>
-            <div class="form-check-inline col-sm-2">
-                <label for="Date"> Dato </label>
-                <InputDate id="Date" @bind-Value="FilterModel.Date" class="form-control" />
-            </div>
-            <div class="form-check-inline col-sm-2">
-                <label for="Priority"> Prioritet </label>
-                <InputSelect @bind-Value="FilterModel.Priority" class="form-select">
-                    <option value=""> Vælg Prioritet </option>
-                    <option value="1"> Lav </option>
-                    <option value="2"> Mellem </option>
-                    <option value="3"> Høj </option>
-                    <option value="4"> Presset </option>
-                </InputSelect>
-            </div>
-            <div class="form-check-inline col-md-2">
-                <label for="Locked"> Vagtstatus </label>
-                <InputSelect @bind-Value="FilterModel.Locked" class="form-select">
-                    <option value="@BoolFilter.Locked"> Ingen filtrering </option>
-                    <option value="false"> Ikke låst </option>
-                    <option value="true"> Låst </option>
-                </InputSelect>
-            </div>
-            <div class="form-check-inline">
-                <button class="btn btn-dark" @onclick="@LoadShifts"> Genindlæs </button>
-            </div>
-        </div>
-    </EditForm>
 </div>
 
 <table class="table">
@@ -128,7 +129,7 @@
                     <td> 
                         @if (CurrentUser.RoleId==2)
                         {
-                            <button class="btn btn-primary" @onclick="(() => EditShift(vagt))"> Rediger </button>
+                            <button class="btn btn-primary" style="margin-right: 5px" @onclick="(() => EditShift(vagt))"> Rediger </button>
                         }
                         @if (vagt.Locked == false && IsTrue(vagtUserList[count]))
                         {
