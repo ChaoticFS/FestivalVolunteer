@@ -193,7 +193,7 @@
                         {
                             <button class="btn btn-dark" @onclick="(() => Afmeld(vagt.ShiftId.Value))"> Afmeld </button>
                         }
-                        else 
+                        else if (vagt.Locked == false)
                         {
                             <button class="btn btn-dark" @onclick="(() => Tilmeld(vagt.ShiftId.Value))"> Tilmeld </button>
                         }
