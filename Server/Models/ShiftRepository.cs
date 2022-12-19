@@ -7,9 +7,9 @@ namespace FestivalVolunteer.Server.Models
     {
         DBContext db;
 
-        public ShiftRepository()
+        public ShiftRepository(DBContext context)
         {
-            this.db = new DBContext();
+            db = context;
             Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
         }
 
@@ -18,8 +18,8 @@ namespace FestivalVolunteer.Server.Models
             try
             {
                 var sql = $"SELECT * " +
-                              $"FROM shift " +
-                              $"{ConstructWhereFromFilter(filter)};";
+                          $"FROM shift " +
+                          $"{ConstructWhereFromFilter(filter)};";
 
                 return db.conn.Query<Shift>(sql);
             }

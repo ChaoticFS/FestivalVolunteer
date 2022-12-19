@@ -8,7 +8,7 @@ namespace FestivalVolunteer.Server.Controllers
     [Route("api/team")]
     public class TeamController : ControllerBase
     {
-        private readonly ITeamRepository Repository = new TeamRepository();
+        private readonly ITeamRepository Repository;
         public TeamController(ITeamRepository teamRepository)
         {
             if (Repository == null && teamRepository != null)

@@ -12,6 +12,8 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ITeamRepository, TeamRepository>();
 builder.Services.AddScoped<IShiftRepository, ShiftRepository>();
 
+builder.Services.AddSingleton<DBContext>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

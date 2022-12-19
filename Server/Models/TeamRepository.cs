@@ -7,9 +7,9 @@ namespace FestivalVolunteer.Server.Models
     {
         DBContext db;
 
-        public TeamRepository()
+        public TeamRepository(DBContext context)
         {
-            this.db = new DBContext();
+            db = context;
             Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
         }
 

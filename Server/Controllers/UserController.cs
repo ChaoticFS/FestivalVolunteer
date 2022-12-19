@@ -8,7 +8,7 @@ namespace FestivalVolunteer.Server.Controllers
     [Route("api/user")]
     public class UserController : ControllerBase
     {
-        private readonly IUserRepository Repository = new UserRepository();
+        private readonly IUserRepository Repository;
         public UserController(IUserRepository userRepository)
         {
             if (Repository == null && userRepository != null)
