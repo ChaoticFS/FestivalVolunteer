@@ -11,7 +11,7 @@ namespace FestivalVolunteer.Server.Controllers
     [Route("api/shift")]
     public class ShiftController : ControllerBase
     {
-        private readonly IShiftRepository Repository = new ShiftRepository();
+        private readonly IShiftRepository Repository;
         public ShiftController(IShiftRepository shiftRepository)
         {
             if (Repository == null && shiftRepository != null)
