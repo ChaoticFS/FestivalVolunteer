@@ -20,7 +20,6 @@ namespace FestivalVolunteer.Client.Services
         }
         public async Task<int> PostUser(User user)
         {
-            Console.WriteLine("Post user called");
             var response = await httpClient.PostAsJsonAsync<User>("api/user", user);
             string result = await response.Content.ReadAsStringAsync();
             return int.Parse(result);

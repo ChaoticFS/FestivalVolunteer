@@ -244,8 +244,6 @@ namespace FestivalVolunteer.Server.Models
                     $"WHERE user_id={userShift.UserId} " +
                     $"AND shift_id={userShift.ShiftId};";
 
-                Console.WriteLine(validationsql);
-
                 var result = db.conn.Query<UserShift>(validationsql).First();
             }
             catch (InvalidOperationException e)

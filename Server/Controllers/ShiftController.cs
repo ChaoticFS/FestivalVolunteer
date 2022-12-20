@@ -18,7 +18,6 @@ namespace FestivalVolunteer.Server.Controllers
             if (Repository == null && shiftRepository != null)
             {
                 Repository = shiftRepository;
-                Console.WriteLine("Repository initialized");
             }
         }
 

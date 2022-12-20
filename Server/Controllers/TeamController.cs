@@ -15,7 +15,6 @@ namespace FestivalVolunteer.Server.Controllers
             if (Repository == null && teamRepository != null)
             {
                 Repository = teamRepository;
-                Console.WriteLine("Repository initialized");
             }
         }
 
@@ -40,7 +39,6 @@ namespace FestivalVolunteer.Server.Controllers
         [HttpPost]
         public void PostTeam(Team team)
         {
-            Console.WriteLine("Post team called");
             Repository.PostTeam(team);
         }
 

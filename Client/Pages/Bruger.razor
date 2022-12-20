@@ -308,7 +308,6 @@
     {
         UserModel.UserId = CurrentUser.UserId;
         UserModel.RoleId = CurrentUser.RoleId;
-        Console.WriteLine(UserModel.UserId);
         await UserService.PutUser(UserModel);
     }
 
