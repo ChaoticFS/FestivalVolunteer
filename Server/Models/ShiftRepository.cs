@@ -3,6 +3,7 @@ using FestivalVolunteer.Shared.Models;
 
 namespace FestivalVolunteer.Server.Models
 {
+    // Modtager kald fra controlleren, sender queries til databasen og returnerer resultatet
     internal class ShiftRepository : IShiftRepository
     {
         DBContext db;
@@ -13,6 +14,16 @@ namespace FestivalVolunteer.Server.Models
             Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
         }
 
+        /*
+        Standard format for funktioner er følgende
+        
+        sql = @"QUERY(SELECT, INSERT INTO, etc)" +
+              @"QUERY(FROM, VALUES, etc)"
+
+        return db.conn.Query/Execute(sql)
+        */
+
+        // Tager et filter som parameter, bruger filteret til at generere "WHERE" delen af sql queryen gennem ConstructWhereFromFilter
         public IEnumerable<Shift> GetFilteredShifts(Filter filter)
         {
             try
@@ -25,18 +36,20 @@ namespace FestivalVolunteer.Server.Models
             }
             catch (Exception e )
             {
-                Console.WriteLine(e.Message);
                 return Enumerable.Empty<Shift>();
             }
         }
 
+        // Laver "WHERE" delen af sql ud fra filteret
         public string? ConstructWhereFromFilter(Filter filter)
         {
-            string whereString = "";
+            // Tom liste til WHERE delen
             List<string> filterList = new List<string>();
 
+            // If statements på alle parametrene i filteret, tilføjer dem til listen til at generere den fulde string efter
             if (filter.Date != null)
             {
+                // ::date konverterer start_time til dato så man kan få alle fra samme dag
                 filterList.Add($"start_time::date ='{filter.Date.Value.ToString("yyyy-MM-dd")}'");
             }
             
@@ -62,11 +75,16 @@ namespace FestivalVolunteer.Server.Models
 
             filterList.Add($"team_id={filter.TeamId}");
 
+            // Tom string til at tilføje parametrene til
+            string whereString = "";
+
+            // Counter så if statementen stopper med at tilføje "AND" når der ikke er flere elementer at tilføje
             int count = filterList.Count;
             if (count > 0)
             {
-                whereString = "WHERE ";
+                whereString = "WHERE "; // Tilføjer WHERE før loopen så den starter med det og ikke gentager det
 
+                // Tilføjer hver parameter til whereString fra
                 foreach (var parameter in filterList)
                 {
                     whereString += $"{parameter}";
@@ -126,11 +144,17 @@ namespace FestivalVolunteer.Server.Models
                         $"team_id = {shift.TeamId} " +
                       $"WHERE shift_id = {shift.ShiftId}";
 
-            Console.WriteLine(sql);
-
             db.conn.Execute(sql);
         }
 
+        /*
+        UserShift er en tilmelding til en vagt
+        Den inkluderer shiftid og userid
+        Hvis bruger og id eksisterer i samme entry betyder det en bruger er tilmeldt til en given vagt
+        Derfor er der heller ikke nogen edit funktioner dertil da en ændring ikke giver mening
+        */
+
+        // Finder alle tilmeldinger til en given vagt
         public List<UserShift> GetAllUsersForShift(int shiftid)
         {
             var sql = $"SELECT * " +
@@ -139,6 +163,7 @@ namespace FestivalVolunteer.Server.Models
 
             List<UserShift> result = new List<UserShift>();
 
+            // try-catch block til hvis der ikke er nogen tilmeldinger med given id
             try
             {
                 var response = db.conn.Query<UserShift>(sql);
@@ -147,17 +172,19 @@ namespace FestivalVolunteer.Server.Models
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
                 return result;
             }
         }
 
+        // Returnerer true eller false, alt efter om tilmelding til vagt eksisterer
         public bool GetUserShift(int userid, int shiftid)
         {
             var sql = $"SELECT * " +
                       $"FROM user_shift " +
                       $"WHERE user_id={userid} " +
                       $"AND shift_id={shiftid}";
+
+            // try-catch, hvis tilmelding eksisterer, returner true, ellers returner false
             try
             {
                 var result = db.conn.Query<UserShift>(sql).First();
@@ -165,19 +192,21 @@ namespace FestivalVolunteer.Server.Models
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
                 return false;
             }
         }
 
+        // Finder alle vagter for en given bruger
         public List<Shift> GetAllShiftsForUser(int userid)
         {
+            // Først finder den tilmeldinger for brugeren
             var sql = $"SELECT * " +
                       $"FROM user_shift " +
                       $"WHERE user_id={userid}";
 
             List<Shift> result = new List<Shift>();
 
+            // try-catch, hvis der er nogen tilmeldinger skaffer den alle vagterne og tilføjer til listen "result"
             try
             {
                 var response = db.conn.Query<UserShift>(sql);
@@ -191,11 +220,11 @@ namespace FestivalVolunteer.Server.Models
             }
             catch (Exception ex)
             {
-                Console.WriteLine(sql, ex);
                 return result;
             }
         }
 
+        // Tæller tilmeldinger til en vagt, bruges til at vise hvor mange tilmeldte ud af hvor mange der er behov for i html
         public int GetUserShiftCount(int shiftid)
         {
             var sql = $"SELECT COUNT(user_id) " +
@@ -205,6 +234,7 @@ namespace FestivalVolunteer.Server.Models
             return db.conn.Query<int>(sql).First();
         }
 
+        // Tilføjer en tilmelding med given bruger og vagt
         public void PostUserToShift(UserShift userShift)
         {
             try
@@ -223,8 +253,6 @@ namespace FestivalVolunteer.Server.Models
                 var sql = $"INSERT INTO user_shift(user_id, shift_id) " +
                             $"VALUES ({userShift.UserId}, {userShift.ShiftId});";
 
-                Console.WriteLine(e.Message, sql);
-
                 db.conn.Execute(sql);
             }
             finally
@@ -232,6 +260,8 @@ namespace FestivalVolunteer.Server.Models
                 Console.WriteLine($"User posted to shift: {userShift.ShiftId}");
             }
         }
+
+        // Sletter en tilmelding
         public void DeleteUserShift(int userid, int shiftid)
         {
             var sql = $"DELETE FROM user_shift " +

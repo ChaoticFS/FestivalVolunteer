@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FestivalVolunteer.Server.Controllers
 {
-    // Modtager HttpRequests fra services
+    // Modtager HttpRequests fra services, sender requests til repositories og returnerer resultatet
     [ApiController]
     [Route("api/team")]
     public class TeamController : ControllerBase

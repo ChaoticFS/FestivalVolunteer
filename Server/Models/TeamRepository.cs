@@ -3,6 +3,7 @@ using FestivalVolunteer.Shared.Models;
 
 namespace FestivalVolunteer.Server.Models
 {
+    // Modtager kald fra controlleren, sender queries til databasen og returnerer resultatet
     public class TeamRepository : ITeamRepository
     {
         DBContext db;
@@ -12,6 +13,15 @@ namespace FestivalVolunteer.Server.Models
             db = context;
             Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
         }
+
+        /*
+        Standard format for funktioner er følgende
+
+        sql = @"QUERY(SELECT, INSERT INTO, etc)" +
+              @"QUERY(FROM, VALUES, etc)"
+
+        return db.conn.Query/Execute(sql)
+        */
 
         public IEnumerable<User> GetTeamMembers(int teamid)
         {
@@ -52,6 +62,8 @@ namespace FestivalVolunteer.Server.Models
 
             db.conn.Execute(sql);
         }
+
+        // Edit team
         public void PutTeam(Team team)
         {
             var sql = $"UPDATE team " +

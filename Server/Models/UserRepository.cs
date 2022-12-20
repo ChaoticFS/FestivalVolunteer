@@ -3,6 +3,7 @@ using FestivalVolunteer.Shared.Models;
 
 namespace FestivalVolunteer.Server.Models
 {
+    // Modtager kald fra controlleren, sender queries til databasen og returnerer resultatet
     public class UserRepository : IUserRepository
     {
         DBContext db;
@@ -12,7 +13,17 @@ namespace FestivalVolunteer.Server.Models
             db = context;
             Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
         }
+        
+        /*
+        Standard format for funktioner er følgende
 
+        sql = @"QUERY(SELECT, INSERT INTO, etc)" +
+              @"QUERY(FROM, VALUES, etc)"
+
+        return db.conn.Query/Execute(sql)
+        */
+
+        // Tjekker om en nullable int er null og returnerer "null" hvis true, så sqlen stadig fungerer når de er null
         public string IsNull(int? property)
         {
             if (property == null)
@@ -36,7 +47,6 @@ namespace FestivalVolunteer.Server.Models
         
         public int PostUser(User user)
         {
-            Console.WriteLine("Post user called");
             var sql = $"INSERT INTO users(user_id, role_id, team_id, name, birthday, email, experience, is_active, group_id) " +
                       $"VALUES (DEFAULT, {user.RoleId}, {IsNull(user.TeamId)}, '{user.Name}', '{user.Birthday.ToString("yyyy-MM-dd")}', '{user.Email}', '{user.Experience}', {user.IsActive}, {IsNull(user.GroupId)}) " +
                       $"RETURNING user_id";
@@ -52,6 +62,7 @@ namespace FestivalVolunteer.Server.Models
             db.conn.Execute(sql);
         }
 
+        // Edit user
         public void PutUser(User user)
         {
             var sql = $"UPDATE users " +

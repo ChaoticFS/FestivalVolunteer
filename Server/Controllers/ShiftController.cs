@@ -7,7 +7,7 @@ using System.Text.Json;
 
 namespace FestivalVolunteer.Server.Controllers
 {
-    // Modtager HttpRequests fra services
+    // Modtager HttpRequests fra services, sender requests til repositories og returnerer resultatet
     [ApiController]
     [Route("api/shift")]
     public class ShiftController : ControllerBase
