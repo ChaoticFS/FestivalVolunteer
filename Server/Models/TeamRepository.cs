@@ -17,8 +17,8 @@ namespace FestivalVolunteer.Server.Models
         /*
         Standard format for funktioner er følgende
 
-        sql = @"QUERY(SELECT, INSERT INTO, etc)" +
-              @"QUERY(FROM, VALUES, etc)"
+        sql = @"(SELECT, INSERT INTO, etc) (*, parameter, etc)" +
+              @"(FROM, VALUES, etc) (table, value, etc)"
 
         return db.conn.Query/Execute(sql)
         */
