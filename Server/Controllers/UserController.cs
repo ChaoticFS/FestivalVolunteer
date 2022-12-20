@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FestivalVolunteer.Server.Controllers
 {
+    // Modtager HttpRequests fra services
     [ApiController]
     [Route("api/user")]
     public class UserController : ControllerBase

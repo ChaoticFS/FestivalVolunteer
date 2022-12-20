@@ -8,6 +8,11 @@
     <h1>Brugerside</h1>
 </div>
 
+<!-- 
+    If elementerne på yderste niveau viser elementer hvis conditions er opfyldte, 
+    CurrentUser trækkes fra localstorage i metoden OnInitializedAsync, 
+    LoadedData er en bool der sættes til true efter sidedata er blevet initialiseret i samme metode
+-->
 @if (CurrentUser == null && LoadedData)
 {
     <button class="btn btn-primary" style="margin: 5px" onclick=@RegisterUser>Registrer Bruger</button>
@@ -30,6 +35,7 @@
 
 @if (RegisterUserActive)
 {
+    <!-- Form der bruges til registration af brugere, den binder til UserModel objektet i koden og viser data derfra -->
     <EditForm Model="UserModel"
         OnValidSubmit="@HandleValidUserRegistry"
         OnInvalidSubmit="@HandleInvalidUserRegistry">
@@ -94,11 +100,13 @@
 
  @if (CurrentUser != null)
 {
+    <!-- Notifikation der bruges til at vise brugerens id, vigtigt fordi det er eneste funktionelle loginparameter -->
     <IdNotification Id=@CurrentUser.UserId.Value />
 }
 
 @if (LoginUserActive)
 {
+    <!-- Form der bruger brugerid til login, der burde være password men det er udenfor scope -->
     <EditForm Model="UserModel"
         OnValidSubmit="@HandleValidLogin"
         OnInvalidSubmit="@HandleInvalidLogin">
@@ -120,6 +128,7 @@
 
 @if (EditUserActive)
 {
+    <!-- Form der bruges til at redigere i brugerdata, metoden der ændrer LoginUserActive til true trækker data fra localstorage og binder det til formen -->
      <EditForm Model="UserModel"
         OnValidSubmit="@HandleValidUserEdit"
         OnInvalidSubmit="@HandleInvalidUserEdit">
@@ -180,16 +189,21 @@
     [Inject]
     public IUserService UserService { get; set; }
 
+    // Data der initialiseres med siden, teams bruges til dropdown af teams i registrationen, CurrentUser bliver trukket fra localstorage
     public User? CurrentUser;
     public bool LoadedData = false;
     public List<Team> teams = new List<Team>();
+
+    // Serie af bools der styrer synlige elementer på siden
     public bool RegisterUserActive = false;
     public bool LoginUserActive = false;
     public bool EditUserActive = false;
     public bool NotifyUser = true;
 
+    // Objektet som bruges til at registrere og ændre i brugerdata
     public User UserModel = new User();
-    public int Id;
+
+
 
     public async void UpdateLocalStorage(User user)
     {
@@ -202,6 +216,7 @@
         CurrentUser = null;
     }
 
+    // Metode der kaldes når siden startes op, den bruges i dette tilfælde til at trække data og vise de rigtige elementer i siden baseret derpå
     protected override async Task OnInitializedAsync()
     {
         CurrentUser = await localStore.GetItemAsync<User>("user");
@@ -216,9 +231,10 @@
             Profile();
         }
 
-        StateHasChanged();
+        StateHasChanged(); //Metode der siger til Blazor at den skal opdatere, den her kommer ofte.
     }
 
+    // Metode der klargører UserModel til registration og viser elementet eller gemmer den hvis allerede synlig
     private void RegisterUser()
     {
         UserModel = new User();
@@ -229,6 +245,7 @@
         StateHasChanged();
     }
 
+    // Klargører UserModel til login og viser elementet eller gemmer den hvis allerede synlig
     private void Login()
     {
         UserModel = new User();
@@ -238,6 +255,7 @@
         StateHasChanged();
     }
 
+    // Fjerner CurrentUser og viser login elementet
     private void Logout()
     {
         CurrentUser = null;
@@ -245,6 +263,7 @@
         Login();
     }
 
+    // Sætter UserModel til dataen fra localstorage og viser elementet til redigering deraf eller gemmer den hvis synlig
     private void Profile()
     {
         UserModel = CurrentUser;
@@ -254,12 +273,12 @@
         StateHasChanged();
     }
 
+    // Metode der kaldes af registrations-formen når en valid bruger indtastes, metoden gemmer brugeren på databasen og displayer notifikation om id
     private async void HandleValidUserRegistry()
     {
         UserModel.UserId = await UserService.PostUser(UserModel);
         CurrentUser = await UserService.GetUser(UserModel.UserId.Value);
         UpdateLocalStorage(CurrentUser);
-        Id = UserModel.UserId.Value;
         UserModel = new User();
         Profile();
         StateHasChanged();
@@ -270,6 +289,7 @@
         Console.WriteLine("Invalid user registry");
     }
 
+    // Kaldes af login-formen, tjekker databasen om id eksisterer og logger ind på den
     private async void HandleValidLogin()
     {
         CurrentUser = await UserService.GetUser(UserModel.UserId.Value);
@@ -283,6 +303,7 @@
         Console.WriteLine("Invalid login");
     }
 
+    // Kaldes af edit-formen, ændrer dataene og bevarer brugerens nuværende rolle og id
     private async void HandleValidUserEdit()
     {
         UserModel.UserId = CurrentUser.UserId;

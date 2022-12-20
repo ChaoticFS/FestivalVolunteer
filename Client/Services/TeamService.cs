@@ -3,13 +3,14 @@ using System.Net.Http.Json;
 
 namespace FestivalVolunteer.Client.Services
 {
+    // Bruges til at kommunikere mellem klient og server
     public class TeamService : ITeamService
     {
         private readonly HttpClient httpClient;
 
         public TeamService(HttpClient httpClient)
         {
-            this.httpClient = httpClient;
+            this.httpClient = httpClient; //Modtager httpClient fra Program.cs
         }
         public Task<User[]> GetTeamMembers(int teamid)
         {

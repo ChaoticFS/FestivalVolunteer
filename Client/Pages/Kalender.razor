@@ -9,6 +9,7 @@
 </div>
 
 <div>
+    <!-- Form der displayer filtreringsmuligheder og binder dem til FilterModel -->
     <EditForm Model="FilterModel">
         <div>
             <div class="form-check-inline col-sm-2">
@@ -48,8 +49,9 @@
     
     <hr />
 
-    @if (registerShift)
+    @if (registerShift) // Kun synlig når bool er true
     {
+    <!-- Form til at håndtere oprettelse af vagter -->
     <EditForm Model="ShiftModel"
           OnValidSubmit="@HandleValidShiftRegistry"
           OnInvalidSubmit="@HandleInvalidShiftRegistry">
@@ -88,8 +90,9 @@
     </EditForm>
     }
 
-    @if (editShift)
+    @if (editShift) // Kun synlig når bool er true
     {
+    <!-- Form der håndterer redigering af eksisterende vagter -->
     <EditForm Model="ShiftModel"
           OnValidSubmit="@HandleValidShiftEdit"
           OnInvalidSubmit="@HandleInvalidShiftEdit">
@@ -133,6 +136,7 @@
     }
 </div>
 
+<!-- Table der viser alle brugerens tilmeldte vagter -->
 <table class="table">
     <thead>
         <tr>
@@ -147,7 +151,7 @@
     </thead>
     @if (vagtList.Any<Shift>())
     {
-        count = 0;
+        count = 0; // Bruges til at finde det nuværende indeks af de forskellige vagtlister
 
         @foreach (var vagt in vagtList)
         {
@@ -185,15 +189,15 @@
                         <td> Ikke låst </td>
                     }
                     <td> 
-                        @if (CurrentUser.RoleId==2)
+                        @if (CurrentUser.RoleId==2) // Hvis brugeren er en koordinator så vis knappen til at redigere i vagten
                         {
                             <button class="btn btn-primary" style="margin-right: 5px" @onclick="(() => EditShift(vagt))"> Rediger </button>
                         }
-                        @if (vagt.Locked == false && IsTrue(vagtUserList[count]))
+                        @if (vagt.Locked == false && IsTrue(vagtUserList[count])) // Hvis vagten ikke er låst og brugeren er tilmeldt vis knap
                         {
                             <button class="btn btn-dark" @onclick="(() => Afmeld(vagt.ShiftId.Value))"> Afmeld </button>
                         }
-                        else if (vagt.Locked == false)
+                        else if (vagt.Locked == false) // Hvis vagten ikke er låst vis knap
                         {
                             <button class="btn btn-dark" @onclick="(() => Tilmeld(vagt.ShiftId.Value))"> Tilmeld </button>
                         }
@@ -215,19 +219,24 @@
     [Inject]
     public ITeamService TeamService { get; set; }
 
+    // Nuværende bruger, initialiseres i OnInitializedAsync
     public User CurrentUser;
 
+    // Lister der bruges i rendering af vagter
     public List<Shift> vagtList = new List<Shift>();
     public List<bool?> vagtUserList = new List<bool?>();
     public List<int> vagtCount = new List<int>();
 
+    // De forskellige objektmodeller der bruges til at ændre i filtre og vagter
     public Filter FilterModel = new Filter();
     public Filter EmptyFilter = new Filter();
     public Shift ShiftModel = new Shift();
 
+    // Bools til at vise og gemme elementer
     public bool editShift;
     public bool registerShift;
 
+    // Bruges til at tracke iterationer i vagt rendering
     public int count;
 
     public bool IsTrue(bool? boolean)
@@ -239,6 +248,7 @@
         return false;
     }
 
+    // Skaffer CurrentUser fra localstorage og initialiserer Filter med teamid
     protected override async Task OnInitializedAsync()
     {
         CurrentUser = await localStore.GetItemAsync<User>("user");
@@ -249,6 +259,7 @@
         }
     }
 
+    // Skaffer alle vagter for brugerens hold, tjekker om brugeren er tilmeldt hver vagt og tjekker hvor mange i alt er tilmeldt per vagt
     public async void LoadShifts()
     {
         vagtList = new List<Shift>();
@@ -270,6 +281,7 @@
         StateHasChanged();
     }
 
+    // Initialiserer ShiftModel med den valgte vagt og viser elementet
     public void EditShift(Shift shift)
     {
         ShiftModel = shift;
@@ -277,6 +289,7 @@
         editShift = !editShift;
     }
 
+    // Initialiserer ShiftModel og viser elementet
     public void CreateShift()
     {
         ShiftModel = new Shift();
@@ -284,7 +297,8 @@
         editShift = false;
         registerShift = !registerShift;
     }
-
+    
+    // Afmelder nuværende bruger fra vagt gennem id
     public async void Afmeld(int shiftid)
     {
         UserShift usershift = new UserShift();
@@ -296,6 +310,7 @@
         StateHasChanged();
     }
 
+    // Tilmelder nuværende bruger til vagt gennem id
     public async void Tilmeld(int shiftid)
     {
         UserShift usershift = new UserShift();
@@ -307,6 +322,7 @@
         StateHasChanged();
     }
 
+    // Tjekker om en bruger er tilmeldt en given vagt og returnerer true/false
     public async Task<bool> GetUserShift(int shiftid, int userid)
     {
         bool result = false;
@@ -317,6 +333,7 @@
         return await ShiftService.GetUserShift(request);
     }
 
+    // Håndterer vagtregistrering
     public async void HandleValidShiftRegistry()
     {
         ShiftModel.Locked = false;
@@ -331,6 +348,7 @@
         Console.WriteLine("Invalid shift registry");
     }
 
+    // Håndterer vagtredigering
     public async void HandleValidShiftEdit()
     {
         await ShiftService.PutShift(ShiftModel);

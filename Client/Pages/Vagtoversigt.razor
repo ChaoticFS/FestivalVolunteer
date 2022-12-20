@@ -8,10 +8,12 @@
     <h1>Dine vagter</h1>
 </div>
 
+<!-- Opdaterer siden hvis vagter ikke vises korrekt (De loader ikke med siden) -->
 <div class="form-check-inline">
     <button class="btn btn-dark" @onclick="@StateHasChanged"> Genindlæs </button>
 </div>
 
+<!-- Renderer alle brugerens tilmeldte vagter -->
 <table class="table">
     <thead>
         <tr>
@@ -72,11 +74,14 @@
     [Inject]
     public IUserService UserService { get; set; }
 
+    // Nuværende bruger, initialiseres i OnInitializedAsync
     public User CurrentUser;
+
+    // Objekter til at opbevare og anskaffe vagter
     public List<Shift> vagtList = new List<Shift>();
     public Filter filter = new Filter();
-    public string Default = "N/A";
 
+    // Loader data på opstart af side
     protected override async Task OnInitializedAsync()
     {
         CurrentUser = await localStore.GetItemAsync<User>("user");

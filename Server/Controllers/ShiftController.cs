@@ -7,6 +7,7 @@ using System.Text.Json;
 
 namespace FestivalVolunteer.Server.Controllers
 {
+    // Modtager HttpRequests fra services
     [ApiController]
     [Route("api/shift")]
     public class ShiftController : ControllerBase
@@ -24,9 +25,7 @@ namespace FestivalVolunteer.Server.Controllers
         [HttpGet("filter")]
         public IEnumerable<Shift>? GetFilteredShifts(string parameters)
         {
-            Console.WriteLine(parameters);
             Filter? filter = JsonSerializer.Deserialize<Filter>(parameters);
-            Console.WriteLine(filter);
             return Repository.GetFilteredShifts(filter);
         }
 

@@ -4,17 +4,19 @@ using System.Text.Json;
 
 namespace FestivalVolunteer.Client.Services
 {
+    // Bruges til at kommunikere mellem klient og server, Shift = vagt, UserShift = tilmelding
     public class ShiftService : IShiftService
     {
         private readonly HttpClient httpClient;
 
         public ShiftService(HttpClient httpClient)
         {
-            this.httpClient = httpClient;
+            this.httpClient = httpClient; //Modtager httpClient fra Program.cs
         }
 
         public Task<Shift[]?> GetFilteredShifts(Filter filter)
         {
+            // Konverterer Filter til Json så man kan smide det med i linket
             string parameters = JsonSerializer.Serialize(filter);
             var result = httpClient.GetFromJsonAsync<Shift[]>($"api/shift/filter?parameters={parameters}");
             return result;
